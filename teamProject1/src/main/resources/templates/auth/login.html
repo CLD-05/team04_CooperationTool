@@ -1,10 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="EUC-KR">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>로그인 - Cooperation Tool</title>
+    <!-- style.css 연결 -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    
+    <div class="auth-container login-box">
+        <h2>로그인</h2>
+        
+        <!-- 회원가입 성공 시 나타나는 파란색 알림창  -->
+        <div th:if="${message}" class="alert alert-success">
+             <strong th:text="${message}"></strong>
+        </div>
+        
+        <!-- 로그인 실패 시 나타나는 빨간색 알림창  -->
+        <div th:if="${error}" class="alert alert-danger">
+            <strong th:text="${error}"></strong>
+        </div>
 
+        <form th:action="@{/api/user/login}" method="post">
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="email" name="email" required placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" name="password" required placeholder="비밀번호를 입력하세요">
+            </div>
+            <button type="submit" class="btn-submit">로그인</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>계정이 없으신가요? <a th:href="@{/api/user/signup}">회원가입 하러가기</a></p>
+        </div>
+    </div>
 </body>
 </html>
