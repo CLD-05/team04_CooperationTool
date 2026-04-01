@@ -28,50 +28,62 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/signup")
-    public String signupPage() {
-        return "auth/signup"; // signup.html 반환
+    public String signupPage() {     
+       return "auth/signup";
     }
     
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignupRequestDto dto, RedirectAttributes redirectAttributes) {
+    public String signup(@ModelAttribute SignupRequestDto dto, RedirectAttributes redirectAttributes) {     
         try {
-            userService.signup(dto); // 서비스 호출 (여기서 중복 이메일 등 예외 발생 가능)
-            // 성공 시 메시지 담기
+            userService.signup(dto);
+            
             redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다!");
             return "redirect:/api/user/login"; 
             
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {          
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/api/user/signup"; 
         }
     }
 
     @GetMapping("/login")
-    public String loginPage() {
-        return "auth/login"; // login.html 반환
+    public String loginPage() {        
+        return "auth/login";
     }
+
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequestDto dto, HttpSession session, Model model) {
+    public String login(@ModelAttribute LoginRequestDto dto, HttpSession session, Model model) {        
         try {
             User user = userService.login(dto);
-            session.setAttribute("userNickname", user.getNickname());
-            return "redirect:/dashboard"; // 로그인 성공 시 대시보드로 이동
-        } catch (IllegalArgumentException e) {
+            
+            // ⭐ 세션 저장 로그
+            session.setAttribute("userNickname", user.getNickname());                      
+            return "redirect:/api/user/dashboard"; 
+        } catch (IllegalArgumentException e) {        
             model.addAttribute("error", e.getMessage());
-            return "auth/login"; // 실패 시 에러 메시지와 함께 로그인 페이지 유지
+            return "auth/login";
         }
     }
 
-    
-    
     @PostMapping("/logout")
     public String logout(HttpSession session) {
-        // 1. 세션의 모든 데이터를 지우고 무효화합니다.
         if (session != null) {
+            String nickname = (String) session.getAttribute("userNickname");
             session.invalidate();
         }
+        return "redirect:/api/user/login";
+    }
+    
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+    
+        // 1. 세션 확인 로그
+        String nickname = (String) session.getAttribute("userNickname");
+        if (nickname == null) {      
+            return "redirect:/api/user/login";
+        }
         
-        // 2. 로그아웃 후에는 다시 로그인 페이지로 리다이렉트 시킵니다.
-        return "redirect:api/user/login";
+        model.addAttribute("nickname", nickname);
+        return "dashboard"; 
     }
 }
