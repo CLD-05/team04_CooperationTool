@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layouts/default-layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ 팀 관리 <small th:text="'# ' + ${teamId}">#1</small></h1>
+            <a th:href="@{'/view/teams/' + ${teamId}}" class="btn-back">← 돌아가기</a>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>👥 참여 팀원 <span th:text="${#lists.size(members)} + '명'" style="color:var(--primary); font-size:14px;"></span></h2>
+                <table>
+                    <thead>
+                        <tr><th>멤버 정보</th><th>역할</th><th style="text-align:right;">관리</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="member : ${members}">
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar" th:text="${#strings.substring(member.userName, 0, 1)}">성</div>
+                                    <div>
+                                        <strong th:text="${member.userName}">성민</strong><br>
+                                        <small th:text="${member.userEmail}" style="color:#999; font-size:12px;">email</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:classappend="${member.role.name() == 'LEADER' ? 'role-leader' : 'role-member'}" 
+                                      class="role-badge" th:text="${member.role}">MEMBER</span>
+                            </td>
+                            <td style="text-align:right;">
+                                <form th:if="${member.role.name() != 'LEADER'}" th:action="@{'/view/teams/' + ${teamId} + '/members/remove'}" method="post">
+                                    <input type="hidden" name="targetUserId" th:value="${member.userId}">
+                                    <button type="submit" class="btn-action btn-remove" onclick="return confirm('삭제하시겠습니까?')">제외</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sidebar">
+                <div class="card" style="margin-bottom:20px;">
+                    <h2>📩 팀원 초대</h2>
+                    <form th:action="@{'/view/teams/' + ${teamId} + '/members/invite'}" method="post">
+                        <input type="email" name="email" placeholder="email@example.com" required>
+                        <button type="submit" class="btn-invite">초대 발송</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>✉️ 대기 중</h2>
+                    <div th:each="invited : ${invitedMembers}" class="waiting-item">
+                        <div><strong th:text="${invited.userName}">이름</strong><br><span class="waiting-status">INVITED</span></div>
+                        <form th:action="@{'/view/teams/' + ${teamId} + '/members/remove'}" method="post">
+                            <input type="hidden" name="targetUserId" th:value="${invited.userId}">
+                            <button type="submit" class="btn-action btn-remove" style="font-size:11px;">취소</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
