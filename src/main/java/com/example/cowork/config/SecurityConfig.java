@@ -32,7 +32,7 @@ public class SecurityConfig {
 
 
 /* 작업 마무리하고 변경(로그인 해야만 다른 페이지 접근 가능)
-public class SecurityConfig {
+		//public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,3 +44,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+*/
