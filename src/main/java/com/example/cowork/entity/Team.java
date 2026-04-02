@@ -24,4 +24,11 @@ public class Team {
     @ManyToOne
     @JoinColumn(name = "leader_id")
     private User leader;
+
+    // 서비스에서 new Team(name, description, leader) 쓰기 위해 추가
+    public Team(String name, String description, User leader) {
+        this.name = name;
+        this.description = description;
+        this.leader = leader;
+    }
 }

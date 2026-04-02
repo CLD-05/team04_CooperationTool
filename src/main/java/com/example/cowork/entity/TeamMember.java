@@ -2,7 +2,6 @@ package com.example.cowork.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class TeamMember {
 
     @Id
@@ -27,4 +25,10 @@ public class TeamMember {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    // 서비스에서 new TeamMember(team, user) 쓰기 위해 추가
+    public TeamMember(Team team, User user) {
+        this.team = team;
+        this.user = user;
+    }
 }

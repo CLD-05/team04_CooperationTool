@@ -73,7 +73,7 @@ public class TeamService {
         return savedTeam;
     }
 
-    public void deleteTeam(Integer teamId, User loginUser) {
+    public void deleteTeam(Long teamId, User loginUser) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
 
@@ -87,28 +87,26 @@ public class TeamService {
         teamRepository.delete(team);
     }
 
-    public void leaveTeam(Integer teamId, User loginUser) {
+    public void leaveTeam(Long teamId, User loginUser) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
 
-        // 리더는 탈퇴 불가
         if (team.getLeader().getId().equals(loginUser.getId())) {
             throw new IllegalArgumentException("팀 리더는 탈퇴할 수 없습니다. 팀을 삭제해주세요.");
         }
 
-        // 팀원인지 확인
         TeamMember teamMember = teamMemberRepository.findByTeamAndUser(team, loginUser)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 이 팀의 팀원이 아닙니다."));
 
         teamMemberRepository.delete(teamMember);
     }
-    
-    public Team getTeamById(Integer teamId) {
+
+    public Team getTeamById(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
     }
 
-    public String getMemberUsernames(Integer teamId) {
+    public String getMemberUsernames(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
 

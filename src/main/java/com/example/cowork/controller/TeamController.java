@@ -48,7 +48,7 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/delete")
-    public String deleteTeam(@PathVariable Integer teamId,
+    public String deleteTeam(@PathVariable Long teamId,
                              @RequestParam String loginUsername,
                              Model model) {
         try {
@@ -67,7 +67,7 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/leave")
-    public String leaveTeam(@PathVariable Integer teamId,
+    public String leaveTeam(@PathVariable Long teamId,
                             @RequestParam String loginUsername,
                             Model model) {
         try {
@@ -83,9 +83,9 @@ public class TeamController {
             return "team/team_error";
         }
     }
-    
+
     @GetMapping("/{teamId}")
-    public String teamDetail(@PathVariable Integer teamId, Model model) {
+    public String teamDetail(@PathVariable Long teamId, Model model) {
         Team team = teamService.getTeamById(teamId);
 
         model.addAttribute("teamId", team.getId());
