@@ -1,9 +1,17 @@
 package com.example.cowork.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "teams")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Team {
 
     @Id
@@ -16,45 +24,4 @@ public class Team {
     @ManyToOne
     @JoinColumn(name = "leader_id")
     private User leader;
-
-    public Team() {
-    }
-
-    public Team(String name, String description, User leader) {
-        this.name = name;
-        this.description = description;
-        this.leader = leader;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public User getLeader() {
-        return leader;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setLeader(User leader) {
-        this.leader = leader;
-    }
 }
