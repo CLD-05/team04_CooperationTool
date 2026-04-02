@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-@Data
 @Entity
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor 
-@Builder 
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
