@@ -1,10 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="EUC-KR">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>공동 캘린더</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background-color: #f5f5f7;
+            font-family: "Malgun Gothic", sans-serif;
+            color: #222;
+        }
+
+        .container {
+            width: 860px;
+            margin: 18px auto 40px;
+        }
+
+        .team-header {
+            margin-bottom: 18px;
+        }
+
+        .team-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .team-header p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .menu-tabs {
+            display: flex;
+            width: 100%;
+            background: #e9e9ee;
+            border-radius: 999px;
+            padding: 3px;
+            margin-bottom: 22px;
+        }
+
+        .menu-tabs a {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            color: #555;
+            padding: 10px 0;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .menu-tabs a.active {
+            background: white;
+            color: #333;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 110px 70px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 48px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .form-row label {
+            width: 110px;
+            font-size: 18px;
+            font-weight: 500;
+            padding-top: 10px;
+        }
+
+        .form-control-area {
+            flex: 1;
+        }
+
+        .text-input,
+        .textarea-input,
+        .select-input,
+        .datetime-input {
+            width: 100%;
+            border: 1px solid #222;
+            border-radius: 10px;
+            font-size: 16px;
+            padding: 10px 14px;
+            background: white;
+        }
+
+        .text-input {
+            height: 44px;
+        }
+
+        .textarea-input {
+            min-height: 120px;
+            resize: none;
+        }
+
+        .select-input {
+            width: 180px;
+            height: 44px;
+        }
+
+        .datetime-input {
+            width: 270px;
+            height: 44px;
+        }
+
+        .submit-wrap {
+            text-align: center;
+            margin-top: 70px;
+        }
+
+        .submit-btn {
+            border: 1px solid #999;
+            background: #f8f8f8;
+            color: #222;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background: #efefef;
+        }
+    </style>
 </head>
 <body>
+
+<div class="container">
+
+    <div class="team-header">
+        <h1 th:text="${teamName}">테스트팀1</h1>
+        <p>React 프로젝트 개발</p>
+    </div>
+
+    <div class="menu-tabs">
+        <a th:href="@{/teams/{team_id}/files(team_id=${teamId})}">파일 공유</a>
+        <a th:href="@{/teams/{team_id}/calendar(team_id=${teamId})}" class="active">공동 캘린더</a>
+    </div>
+
+    <div class="form-card">
+        <h2 class="form-title"
+            th:text="${calendarOne != null} ? '일정 수정' : '일정 등록'">
+            일정 등록
+        </h2>
+		
+        <form th:action="${calendarOne != null}
+                            ? @{/teams/{team_id}/calendar/{task_id}/edit(team_id=${teamId}, task_id=${calendarOne.id})}
+                            : @{/teams/{team_id}/calendar(team_id=${teamId})}"
+              method="post">
+
+            <input type="hidden" name="id" th:value="${calendarOne?.id}">
+
+            <div class="form-row">
+                <label for="title">제목</label>
+                <div class="form-control-area">
+                    <input id="title"
+                           class="text-input"
+                           type="text"
+                           name="title"
+                           th:value="${calendarOne?.title}"
+                           required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="content">내용</label>
+                <div class="form-control-area">
+                    <textarea id="content"
+                              class="textarea-input"
+                              name="content"
+                              th:text="${calendarOne?.content}"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="taskStatus">상태</label>
+                <div class="form-control-area">
+                    <select id="taskStatus" class="select-input" name="taskStatus" required>
+                        <option value="TODO"
+                                th:selected="${calendarOne != null and calendarOne.taskStatus.toString() == 'TODO'}">
+                            TODO
+                        </option>
+                        <option value="PROGRESS"
+                                th:selected="${calendarOne != null and calendarOne.taskStatus.toString() == 'PROGRESS'}">
+                            PROGRESS
+                        </option>
+                        <option value="DONE"
+                                th:selected="${calendarOne != null and calendarOne.taskStatus.toString() == 'DONE'}">
+                            DONE
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="startAt">시작 시간</label>
+                <div class="form-control-area">
+                    <input id="startAt"
+                           class="datetime-input"
+                           type="datetime-local"
+                           name="startAt"
+                           th:value="${calendarOne != null ? #temporals.format(calendarOne.startAt, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                           required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="endAt">종료 시간</label>
+                <div class="form-control-area">
+                    <input id="endAt"
+                           class="datetime-input"
+                           type="datetime-local"
+                           name="endAt"
+                           th:value="${calendarOne != null ? #temporals.format(calendarOne.endAt, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                           required>
+                </div>
+            </div>
+			<div th:if="${errorMessage}" style="color:red;"> <span th:text="${errorMessage}"></span> </div>
+            <div class="submit-wrap">
+                <button type="submit"
+                        class="submit-btn"
+                        th:text="${calendarOne != null} ? '수정하기' : '등록하기'">
+                    등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

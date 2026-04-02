@@ -1,10 +1,307 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="EUC-KR">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 공동 캘린더</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f6f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .team-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .team-header p {
+            margin: 8px 0 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .menu-tabs {
+            display: flex;
+            margin-top: 24px;
+            background: #ececf1;
+            border-radius: 999px;
+            padding: 4px;
+            gap: 4px;
+        }
+	
+        .menu-tabs a {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            text-decoration: none;
+            color: #444;
+            border-radius: 999px;
+            font-size: 14px;
+        }
+
+        .menu-tabs a.active {
+            background: white;
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .calendar-box {
+            margin-top: 24px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .add-btn {
+            background: #0b1020;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .date-group {
+            margin-bottom: 28px;
+        }
+
+        .date-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e2a4a;
+        }
+
+        .schedule-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border: 1px solid #ececec;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: #fff;
+        }
+
+        .schedule-left h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c2340;
+        }
+
+        .schedule-left p {
+            margin: 10px 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .schedule-time {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        .badge-done {
+            background: #dff7e8;
+            color: #2e8b57;
+        }
+
+        .badge-progress {
+            background: #e2ebff;
+            color: #4a6cf7;
+        }
+
+        .badge-pending {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .schedule-actions {
+            display: flex;
+            gap: 14px;
+            font-size: 18px;
+        }
+
+        .schedule-actions a {
+            text-decoration: none;
+            color: #444;
+        }
+
+        .schedule-actions a.delete {
+            color: #ff4d4f;
+        }
+        
+        .page-wrap {
+ 			margin-top: 30px;
+		}
+
+		.custom-pagination {
+  			gap: 8px;
+		}
+
+		.custom-pagination .page-item .page-link {
+  			border: none;
+  			background: transparent;
+  			color: #333;
+  			min-width: 36px;
+  			height: 36px;
+  			padding: 0 12px;
+  			border-radius: 10px;
+  			display: flex;
+  			align-items: center;
+  			justify-content: center;
+  			box-shadow: none;
+		}
+
+		.custom-pagination .page-item .page-link.number {
+  			font-size: 15px;
+		}
+
+		.custom-pagination .page-item .page-link.arrow {
+  			font-size: 22px;
+  			color: #bdbdbd;
+		}
+
+		.custom-pagination .page-item.active .page-link {
+  			border: 1px solid #4a90ff;
+  			color: #4a90ff;
+  			background-color: white;
+		}
+
+		.custom-pagination .page-item.disabled .page-link {
+  			color: #d6d6d6;
+  			pointer-events: none;
+  			background: transparent;
+		}
+    </style>
 </head>
 <body>
+<div class="container">
 
+    <!-- 팀 정보 -->
+    <div class="team-header">
+        <h1 th:text="${teamName}">프론트엔드 개발팀</h1>
+        <p>React 프로젝트 개발</p>
+    </div>
+
+    <!-- 상단 탭 -->
+    <div class="menu-tabs">
+        <a th:href="@{/teams/{team_id}/files(team_id=${teamId})}">파일 공유</a>
+        <a th:href="@{/teams/{team_id}/calendar(team_id=${teamId})}" class="active">공동 캘린더</a>
+    </div>
+
+    <!-- 캘린더 영역 -->
+    <div class="calendar-box">
+        <div class="calendar-header">
+            <h2>팀 공동 캘린더</h2>
+            <button type="button" class="add-btn"
+                    th:onclick="|location.href='@{/teams/{team_id}/calendar/new(team_id=${teamId})}'|">
+                + 일정 추가
+            </button>
+        </div>
+
+        <!-- 날짜 그룹 1 -->
+        <div class="date-group" th:each="calendar : ${calendarAll}">
+            <div class="date-title" th:text="${#temporals.format(calendar?.startAt, 'yyyy년 MM월 dd일')}">시작 날짜</div>
+
+            <div class="schedule-card">
+                <div class="schedule-left">
+                    <h3>
+                        <span th:text="${calendar?.title}">title</span>
+                        <span class="badge badge-done" th:text="${calendar?.taskStatus}">진행 상태</span>
+                    </h3>
+                    <p th:text="${calendar?.content}">content</p>
+                    <div class="schedule-time">
+                    [[${#temporals.format(calendar?.startAt, 'yyyy-MM-dd HH:mm')}]] - [[${#temporals.format(calendar?.endAt, 'yyyy-MM-dd HH:mm')}]]</div>
+                </div>
+					<div class="schedule-actions">
+						<!-- 수정 -->
+						<a th:href="@{/teams/{team_id}/calendar/{task_id}/edit(
+                    team_id=${teamId},task_id=${calendar.id})}">
+							✏ </a>
+						<!-- 삭제 -->
+						<form th:action="@{/teams/{team_id}/calendar/{task_id}/delete(
+                        team_id=${teamId},task_id=${calendar.id})}" method="post" style="display: inline;">
+							<button type="submit">🗑</button>
+						</form>
+
+					</div>
+				</div>
+        </div>
+
+			<div class="page-wrap">
+				<nav aria-label="Page navigation">
+					<ul class="pagination custom-pagination justify-content-center">
+
+						<!-- 이전 -->
+						<li class="page-item"
+							th:classappend="${calendarAll.hasPrevious()} ? '' : 'disabled'">
+							<a class="page-link arrow"
+							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${calendarAll.number - 1})}"
+							aria-label="Previous"> ‹ </a>
+						</li>
+
+						<!-- 페이지 번호 -->
+						<li class="page-item" th:each="pagingNumber : ${pagingNumbers}"
+							th:classappend="${pagingNumber == calendarAll.number + 1} ? 'active' : ''">
+							<a class="page-link number"
+							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${pagingNumber - 1})}"
+							th:text="${pagingNumber}"> 1 </a>
+						</li>
+
+						<!-- 다음 -->
+						<li class="page-item"
+							th:classappend="${calendarAll.hasNext()} ? '' : 'disabled'">
+							<a class="page-link arrow"
+							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${calendarAll.number + 1})}"
+							aria-label="Next"> › </a>
+						</li>
+
+					</ul>
+				</nav>
+			</div>
+
+		</div>
+</div>
 </body>
 </html>

@@ -37,22 +37,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 테스트 편의를 위해 해제
+            .csrf(csrf -> csrf.disable()) // CSRF 보안 비활성화 (테스트 시 필수)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/user/signup", "/api/user/login", "/css/**", "/js/**").permitAll() 
-                .anyRequest().authenticated()
-            )
-            .formLogin(login -> login
-                .loginPage("/api/user/login") // 우리 로그인 페이지 주소
-                .defaultSuccessUrl("/api/user/dashboard", true)
-            )
-            .logout(logout -> logout
-                .logoutUrl("/api/user/logout")
-                .logoutSuccessUrl("/api/user/login")
-                .invalidateHttpSession(true) // 세션 즉시 삭제
+                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용
             );
         return http.build();
     }
 }
-
-*/

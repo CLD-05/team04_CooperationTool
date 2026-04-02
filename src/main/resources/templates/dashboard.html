@@ -1,41 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>대시보드 - Cooperation Tool</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .dashboard-container {
-            background-color: #fff;
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 600px;
-        }
-        .welcome-msg { font-size: 24px; margin-bottom: 20px; }
-        .nickname { color: #3498db; font-weight: bold; }
-        .logout-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #e74c3c;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1 class="welcome-msg">
-            🎉 반갑습니다, <span class="nickname" th:text="${nickname}">사용자</span>님!
-        </h1>
-        <p>협업 도구 대시보드에 접속하셨습니다.</p>
-        
-        <form th:action="@{/api/user/logout}" method="post">
-            <button type="submit" class="logout-btn" style="border:none; cursor:pointer;">로그아웃</button>
-        </form>
-    </div>
+
 </body>
 </html>
