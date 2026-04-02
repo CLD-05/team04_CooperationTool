@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>팀 탈퇴 완료</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 420px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h2 {
+            color: #243b53;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        a {
+            display: inline-block;
+            text-decoration: none;
+            background: #3b97d3;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        a:hover {
+            background: #2f86bf;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>팀 탈퇴 완료</h2>
+    <div class="message" th:text="${message}"></div>
+    <a href="/teams/new">팀 생성 페이지로 이동</a>
+</div>
+</body>
+</html>
