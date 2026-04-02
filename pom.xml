@@ -8,10 +8,10 @@
 		<version>3.5.13</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example.teamProject1</groupId>
-	<artifactId>teamProject1</artifactId>
+	<groupId>com.example.cowork</groupId>
+	<artifactId>cowork</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>teamProject1</name>
+	<name>cowork</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -75,6 +75,13 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

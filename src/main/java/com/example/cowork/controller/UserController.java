@@ -13,8 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.cowork.dto.auth.LoginRequestDto;
 import com.example.cowork.dto.auth.SignupRequestDto;
+import com.example.cowork.entity.User;
 import com.example.cowork.service.UserService;
-import com.example.tcowork.entity.User;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

@@ -1,20 +1,16 @@
-package com.example.tcowork.entity;
+package com.example.cowork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor 
 @Builder 
-@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
@@ -30,12 +26,6 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
 
     // 비즈니스 로직: 닉네임 변경 등
     public void updateNickname(String newNickname) {

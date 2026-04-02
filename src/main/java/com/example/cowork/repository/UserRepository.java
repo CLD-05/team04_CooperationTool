@@ -3,7 +3,7 @@ package com.example.cowork.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.tcowork.entity.User;
+import com.example.cowork.entity.User;
 
 import java.util.Optional;
 

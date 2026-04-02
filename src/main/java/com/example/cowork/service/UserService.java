@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.cowork.dto.auth.LoginRequestDto;
 import com.example.cowork.dto.auth.SignupRequestDto;
+import com.example.cowork.entity.User;
 import com.example.cowork.repository.UserRepository;
-import com.example.tcowork.entity.User;
 
 import lombok.RequiredArgsConstructor;
 

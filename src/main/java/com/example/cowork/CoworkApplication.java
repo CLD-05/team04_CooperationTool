@@ -3,11 +3,12 @@ package com.example.cowork;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
-public class TeamProject1Application {
+
+@SpringBootApplication(scanBasePackages = "com.example.cowork")
+public class CoworkApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TeamProject1Application.class, args);
+		SpringApplication.run(CoworkApplication.class, args);
 	}
 
 }
