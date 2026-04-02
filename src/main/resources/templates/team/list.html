@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 자료실</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <style>
+        /* 공통 레이아웃 스타일 */
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background-color: #f6f7fb; color: #222; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+        
+        .team-header h1 { margin: 0; font-size: 32px; font-weight: 700; }
+        .team-header p { margin: 8px 0 0; color: #777; font-size: 14px; }
+        
+        .menu-tabs { display: flex; margin-top: 24px; background: #ececf1; border-radius: 999px; padding: 4px; gap: 4px; }
+        .menu-tabs a { flex: 1; text-align: center; padding: 12px 0; text-decoration: none; color: #444; border-radius: 999px; font-size: 14px; }
+        .menu-tabs a.active { background: white; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        
+        .content-box { margin-top: 24px; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .content-header h2 { margin: 0; font-size: 20px; }
+        
+        .add-btn { background: #0b1020; color: white; border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer; text-decoration: none;}
+        .add-btn:hover { background: #1c2340; color: white;}
+
+        /* 파일 테이블 스타일 (부트스트랩 테이블 활용) */
+        .table th { background-color: #f8f9fa; text-align: center; font-weight: 600;}
+        .table td { text-align: center; vertical-align: middle; }
+        .action-icon { text-decoration: none; font-size: 18px; margin: 0 5px; cursor: pointer;}
+        
+        /* 페이징 스타일 적용 */
+        .page-wrap { margin-top: 30px; }
+        .custom-pagination { gap: 8px; }
+        .custom-pagination .page-item .page-link { border: none; background: transparent; color: #333; min-width: 36px; height: 36px; padding: 0 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: none; }
+        .custom-pagination .page-item .page-link.number { font-size: 15px; }
+        .custom-pagination .page-item .page-link.arrow { font-size: 22px; color: #bdbdbd; }
+        .custom-pagination .page-item.active .page-link { border: 1px solid #4a90ff; color: #4a90ff; background-color: white; }
+        .custom-pagination .page-item.disabled .page-link { color: #d6d6d6; pointer-events: none; background: transparent; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="team-header">
+        <h1 th:text="${teamName != null ? teamName : '팀 스페이스'}">팀 이름</h1>
+        <p>프로젝트 자료 및 일정 관리</p>
+    </div>
+
+    <div class="menu-tabs">
+        <a th:href="@{/teams/{team_id}/files(team_id=${teamId})}" class="active">파일 공유</a>
+        <a th:href="@{/teams/{team_id}/calendar(team_id=${teamId})}">공동 캘린더</a>
+    </div>
+
+    <div class="content-box">
+        <div class="content-header">
+            <h2>팀 자료실</h2>
+            <a th:href="@{/teams/{teamId}/files/upload(teamId=${teamId})}" class="add-btn">+ 새 파일 업로드</a>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>파일명</th>
+                    <th>업로더 ID</th>
+                    <th>업로드 시간</th>
+                    <th>다운로드</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${files.totalElements == 0}">
+                    <td colspan="5" class="text-center py-4 text-muted">현재 등록된 파일이 없습니다.</td>
+                </tr>
+
+                <tr th:each="file : ${files.content}">
+                    <td class="text-start" th:text="${file.fileName}">파일명.txt</td>
+                    <td th:text="${file.uploaderId}">1</td>
+                    <td th:text="${file.createdAt}">2026-03-31 15:30</td>
+                    
+                    <td>
+                        <a th:href="@{/teams/{teamId}/files/{fileId}/download(teamId=${teamId}, fileId=${file.id})}" class="action-icon" title="다운로드">
+                            💾
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <form th:action="@{/teams/{teamId}/files/{fileId}/delete(teamId=${teamId}, fileId=${file.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="action-icon" style="background:none; border:none; color: #ff4d4f;" onclick="return confirm('정말 이 파일을 삭제하시겠습니까?');" title="삭제">
+                                🗑
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="page-wrap">
+            <nav aria-label="Page navigation">
+                <ul class="pagination custom-pagination justify-content-center">
+                    
+                    <li class="page-item" th:classappend="${files.first} ? 'disabled' : ''">
+                        <a class="page-link arrow" th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${files.number - 1})}"> ‹ </a>
+                    </li>
+
+                    <li class="page-item" 
+                        th:each="pageNumber : ${#numbers.sequence(0, (files.totalPages > 0 ? files.totalPages - 1 : 0))}"
+                        th:classappend="${pageNumber == files.number} ? 'active' : ''">
+                        <a class="page-link number" 
+                           th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${pageNumber})}"
+                           th:text="${pageNumber + 1}">1</a>
+                    </li>			
+
+                    <li class="page-item" th:classappend="${files.last} ? 'disabled' : ''">
+                        <a class="page-link arrow" th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${files.number + 1})}"> › </a>
+                    </li>			        
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const errorMessage = /*[[${errorMessage}]]*/ null;
+    const successMsg = /*[[${successMessage}]]*/ null;
+    
+    if (errorMessage) {
+        alert(errorMessage);
+    } else if (successMsg) {
+        alert(successMsg);
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
