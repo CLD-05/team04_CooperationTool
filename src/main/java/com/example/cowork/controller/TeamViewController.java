@@ -31,7 +31,7 @@ public class TeamViewController {
             model.addAttribute("members", teamMemberService.getTeamMembers(teamId));
             model.addAttribute("invitedMembers", teamMemberService.getInviteMembers(teamId));
             
-            return "team-members";
+            return "team/team-members";
         } catch (Exception e) {
         	e.printStackTrace();
             return "redirect:/view/teams?error=not-found";

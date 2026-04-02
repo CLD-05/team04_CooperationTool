@@ -42,7 +42,7 @@ public class CalendarController {
 		map.addAttribute("teamName", calendarService.getTeam(tid).getName());
 		map.addAttribute("calendarAll", calendars);
 		map.addAttribute("teamId", tid);
-		return "teams/calendar";
+		return "calendar/calendar";
 	}
 	
 	// 캘린더 등록 폼 
@@ -51,7 +51,7 @@ public class CalendarController {
 									ModelMap map) {
 		map.addAttribute("teamId", tid);
 		map.addAttribute("teamName", calendarService.getTeam(tid).getName());
-		return "teams/calendar_form";
+		return "calendar/calendar_form";
 	}
 	
 	// 캘린더 등록 처리
@@ -64,7 +64,7 @@ public class CalendarController {
 		} catch (IllegalArgumentException e) {
 			map.addAttribute("errorMessage", e.getMessage());
 			map.addAttribute("teamId", tid);
-			return "teams/calendar_form";
+			return "calendar/calendar_form";
 		}
 		
 		return "redirect:/teams/{team_id}/calendar";
@@ -79,7 +79,7 @@ public class CalendarController {
 		map.addAttribute("teamName", calendarService.getTeam(tid).getName());
 		map.addAttribute("calendarOne", task);
 		map.addAttribute("teamId", tid);
-		return "teams/calendar_form";
+		return "calendar/calendar_form";
 	}
 	
 	@PostMapping("/{team_id}/calendar/{task_id}/edit")
