@@ -21,34 +21,36 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
-@Builder
+@Entity
 @Table(name = "teams")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "tasks")
-@Entity
+@Builder
 public class Team {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(nullable = false)
-	private String name;
-	
-	@Column(length = 500)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // Integer → Long 변경
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(length = 500)
     private String description;
-	
-	@CreationTimestamp
-	@Column(name = "created_at", updatable = false)
-	private LocalDateTime createdAt;
-	
-	@OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id")
+    private User leader;
+    
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Task> tasks = new ArrayList<>();
-	
 }
+
