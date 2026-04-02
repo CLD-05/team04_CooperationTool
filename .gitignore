@@ -33,6 +33,7 @@ tmp/
 # 테스트 파일 방지
 *Test.java
 *Tests.java
+!CoWorkApplicationTests.java
 
 # CDT- autotools
 .autotools
