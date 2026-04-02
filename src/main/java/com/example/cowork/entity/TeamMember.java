@@ -35,13 +35,5 @@ public class TeamMember {
     @Column(nullable = false)
     private MemberStatus status; // INVITED, JOINED
 
-    // 편의 메서드: 초대장 생성 시 사용
-    public static TeamMember createInvitation(Team team, User user) {
-        return TeamMember.builder()
-                .team(team)
-                .user(user)
-                .role(MemberRoleType.MEMBER)
-                .status(MemberStatus.INVITED)
-                .build();
-    }
+
 }
