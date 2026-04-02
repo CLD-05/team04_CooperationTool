@@ -1,7 +1,8 @@
-package com.example.teamProject1.repository;
+package com.example.cowork.repository;
 
-import com.example.teamProject1.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.cowork.entity.User;
 
 import java.util.Optional;
 

@@ -1,7 +1,8 @@
-package com.example.teamProject1.repository;
+package com.example.cowork.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.teamProject1.entity.Team;
+
+import com.example.cowork.entity.Team;
 
 public interface TeamRepository extends JpaRepository<Team, Integer> {
 }

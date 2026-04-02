@@ -1,6 +1,7 @@
-package com.example.teamProject1.dto;
+package com.example.cowork.dto;
 
-import com.example.teamProject1.entity.Team;
+import com.example.cowork.entity.Team;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,10 +9,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TeamDto {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
-    private Integer leaderId;
+    private Long leaderId;
     private String leaderUsername;
 
     public static TeamDto fromEntity(Team team) {

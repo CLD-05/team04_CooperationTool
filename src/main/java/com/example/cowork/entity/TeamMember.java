@@ -1,4 +1,4 @@
-package com.example.teamProject1.entity;
+package com.example.cowork.entity;
 
 import jakarta.persistence.*;
 
@@ -8,7 +8,7 @@ public class TeamMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
@@ -26,7 +26,7 @@ public class TeamMember {
         this.user = user;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -38,7 +38,7 @@ public class TeamMember {
         return user;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

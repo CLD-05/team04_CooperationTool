@@ -1,10 +1,11 @@
-package com.example.teamProject1.controller;
+package com.example.cowork.controller;
 
-import com.example.teamProject1.dto.TeamForm;
-import com.example.teamProject1.entity.Team;
-import com.example.teamProject1.entity.User;
-import com.example.teamProject1.repository.UserRepository;
-import com.example.teamProject1.service.TeamService;
+import com.example.cowork.dto.TeamForm;
+import com.example.cowork.entity.Team;
+import com.example.cowork.entity.User;
+import com.example.cowork.repository.UserRepository;
+import com.example.cowork.service.TeamService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

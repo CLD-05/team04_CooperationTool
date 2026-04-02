@@ -1,12 +1,13 @@
-package com.example.teamProject1.service;
+package com.example.cowork.service;
 
-import com.example.teamProject1.dto.TeamForm;
-import com.example.teamProject1.entity.Team;
-import com.example.teamProject1.entity.TeamMember;
-import com.example.teamProject1.entity.User;
-import com.example.teamProject1.repository.TeamMemberRepository;
-import com.example.teamProject1.repository.TeamRepository;
-import com.example.teamProject1.repository.UserRepository;
+import com.example.cowork.dto.TeamForm;
+import com.example.cowork.entity.Team;
+import com.example.cowork.entity.TeamMember;
+import com.example.cowork.entity.User;
+import com.example.cowork.repository.TeamMemberRepository;
+import com.example.cowork.repository.TeamRepository;
+import com.example.cowork.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

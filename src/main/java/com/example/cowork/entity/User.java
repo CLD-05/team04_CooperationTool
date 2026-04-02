@@ -1,4 +1,4 @@
-package com.example.teamProject1.entity;
+package com.example.cowork.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,12 +12,12 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String username;
     private String password;
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

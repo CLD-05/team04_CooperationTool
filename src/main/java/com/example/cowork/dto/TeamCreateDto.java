@@ -1,4 +1,4 @@
-package com.example.teamProject1.dto;
+package com.example.cowork.dto;
 
 public class TeamCreateDto {
 
