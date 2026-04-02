@@ -210,3 +210,5 @@ src/main/resources/application-local.yml
 src/main/resources/application-local.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
+team04_CooperationTool/
+teamProject1/
