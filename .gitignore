@@ -1,5 +1,4 @@
 # Created by https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,windows,macos,maven,gradle,java,visualstudiocode
 
 ### Eclipse ###
 .metadata
@@ -12,82 +11,29 @@ tmp/
 .settings/
 .loadpath
 .recommenders
-
-# External tool builders
 .externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
 *.launch
-
-# PyDev specific (Python IDE for Eclipse)
 *.pydevproject
-
-# CDT-specific (C/C++ Development Tooling)
 .cproject
-
-# 메인 클래스 중복 방지
-*Application.java
-!CoWorkApplication.java
-
-# 테스트 파일 방지
-*Test.java
-*Tests.java
-!CoWorkApplicationTests.java
-
-# CDT- autotools
 .autotools
-
-# Java annotation processor (APT)
 .factorypath
-
-# PDT-specific (PHP Development Tools)
 .buildpath
-
-# sbteclipse plugin
 .target
-
-# Tern plugin
 .tern-project
-
-# TeXlipse plugin
 .texlipse
-
-# STS (Spring Tool Suite)
 .springBeans
-
-# Code Recommenders
 .recommenders/
-
-# Annotation Processing
 .apt_generated/
 .apt_generated_test/
-
-# Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
 .scala_dependencies
-
-# Uncomment this line if you wish to ignore the project description file.
-# Typically, this file would be tracked if it contains build/dependency configurations:
-#.project
-
-### Eclipse Patch ###
-# Spring Boot Tooling
 .sts4-cache/
 
 ### Java ###
-# Compiled class file
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -95,8 +41,6 @@ tmp/
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs
 hs_err_pid*
 replay_pid*
 
@@ -118,8 +62,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
-### macOS Patch ###
 *.icloud
 
 ### Maven ###
@@ -133,27 +75,18 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-
-# Eclipse m2e generated files
 .project
 .classpath
 
-### VisualStudioCode ###
+### VSCode ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
 .history/
-
-# Built Visual Studio Code Extensions
 *.vsix
-
-### VisualStudioCode Patch ###
-.history
 .ionide
 
 ### Windows ###
@@ -175,20 +108,10 @@ $RECYCLE.BIN/
 .gradle
 **/build/
 !src/**/build/
-
-# Ignore Gradle GUI config
 gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file
 !gradle-wrapper.jar
-
-# Avoid ignore Gradle wrapper properties
 !gradle-wrapper.properties
-
-# Cache of project
 .gradletasknamecache
-
-### Gradle Patch ###
 *.hprof
 
 ### IntelliJ IDEA ###
@@ -205,19 +128,31 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### Project files ###
+### Project ###
 HELP.md
 
-### Env / Secret ###
+### Spring - 민감 정보 차단 ###
+# 메인 클래스 중복 방지
+*Application.java
+!CoWorkApplication.java
+
+# 테스트 파일 방지
+*Test.java
+*Tests.java
+!CoWorkApplicationTests.java
+
+# 모든 properties/yml 차단 후 필요한 것만 허용
+src/main/resources/application*.properties
+src/main/resources/application*.yml
+!src/main/resources/application.properties.example
+
+# 환경 변수 / 시크릿
 .env
 .env.*
 application-secret.yml
 application-secret.properties
-
-### Spring local config ###
 src/main/resources/application-local.yml
 src/main/resources/application-local.properties
 
-# End of https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
-team04_CooperationTool/
-teamProject1/
+### Project root ###
+team04_CooperationTool/co-work/
