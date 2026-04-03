@@ -31,13 +31,21 @@ public class TeamController {
     @PostMapping("/new")
     public String createTeam(@ModelAttribute("teamForm") TeamForm teamForm, Model model) {
         try {
-            Team savedTeam = teamService.createTeam(teamForm);
+            if (teamForm.getLoginEmail() == null || teamForm.getLoginEmail().trim().isEmpty()) {
+                throw new IllegalArgumentException("로그인 이메일을 입력해주세요.");
+            }
+
+            User loginUser = userRepository.findByEmail(teamForm.getLoginEmail().trim())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+            Team savedTeam = teamService.createTeam(teamForm, loginUser);
 
             model.addAttribute("teamId", savedTeam.getId());
             model.addAttribute("teamName", savedTeam.getName());
-            model.addAttribute("leaderUsername", teamForm.getLeaderUsername());
-            model.addAttribute("memberUsernames", teamForm.getMemberUsernames());
+            model.addAttribute("leaderEmail", savedTeam.getLeader().getEmail());
+            model.addAttribute("memberEmails", teamService.getMemberEmails(savedTeam.getId()));
             model.addAttribute("description", savedTeam.getDescription());
+            model.addAttribute("loginEmail", loginUser.getEmail());
 
             return "team/team_complete";
         } catch (Exception e) {
@@ -47,19 +55,34 @@ public class TeamController {
         }
     }
 
+    @GetMapping("/{teamId}")
+    public String teamDetail(@PathVariable Long teamId,
+                             @RequestParam(required = false) String loginEmail,
+                             Model model) {
+        Team team = teamService.getTeamById(teamId);
+
+        model.addAttribute("teamId", team.getId());
+        model.addAttribute("teamName", team.getName());
+        model.addAttribute("leaderEmail", team.getLeader().getEmail());
+        model.addAttribute("description", team.getDescription());
+        model.addAttribute("memberEmails", teamService.getMemberEmails(teamId));
+        model.addAttribute("loginEmail", loginEmail);
+
+        return "team/team_complete";
+    }
+
     @PostMapping("/{teamId}/delete")
     public String deleteTeam(@PathVariable Long teamId,
-                             @RequestParam String loginUsername,
+                             @RequestParam String loginEmail,
                              Model model) {
         try {
-            User loginUser = userRepository.findByUsername(loginUsername)
+            User loginUser = userRepository.findByEmail(loginEmail.trim())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
             teamService.deleteTeam(teamId, loginUser);
 
             model.addAttribute("message", "팀이 성공적으로 삭제되었습니다.");
             return "team/team_deleted";
-
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "team/team_error";
@@ -68,32 +91,19 @@ public class TeamController {
 
     @PostMapping("/{teamId}/leave")
     public String leaveTeam(@PathVariable Long teamId,
-                            @RequestParam String loginUsername,
+                            @RequestParam String loginEmail,
                             Model model) {
         try {
-            User loginUser = userRepository.findByUsername(loginUsername)
+            User loginUser = userRepository.findByEmail(loginEmail.trim())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
             teamService.leaveTeam(teamId, loginUser);
 
-            return "redirect:/teams/" + teamId;
-
+            model.addAttribute("message", "팀에서 성공적으로 탈퇴했습니다.");
+            return "team/team_deleted";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "team/team_error";
         }
-    }
-
-    @GetMapping("/{teamId}")
-    public String teamDetail(@PathVariable Long teamId, Model model) {
-        Team team = teamService.getTeamById(teamId);
-
-        model.addAttribute("teamId", team.getId());
-        model.addAttribute("teamName", team.getName());
-        model.addAttribute("leaderUsername", team.getLeader().getUsername());
-        model.addAttribute("description", team.getDescription());
-        model.addAttribute("memberUsernames", teamService.getMemberUsernames(teamId));
-
-        return "team/team_complete";
     }
 }

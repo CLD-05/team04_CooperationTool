@@ -13,15 +13,15 @@ public class TeamDto {
     private String name;
     private String description;
     private Long leaderId;
-    private String leaderUsername;
+    //private String leaderUsername;
 
     public static TeamDto fromEntity(Team team) {
         return new TeamDto(
                 team.getId(),
                 team.getName(),
                 team.getDescription(),
-                team.getLeader().getId(),
-                team.getLeader().getUsername()
+                team.getLeader().getId()
+              
         );
     }
 }

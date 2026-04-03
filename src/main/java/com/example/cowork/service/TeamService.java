@@ -7,11 +7,14 @@ import com.example.cowork.entity.User;
 import com.example.cowork.repository.TeamMemberRepository;
 import com.example.cowork.repository.TeamRepository;
 import com.example.cowork.repository.UserRepository;
+import com.example.cowork.type.MemberRoleType;
+import com.example.cowork.type.MemberStatus;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,41 +32,43 @@ public class TeamService {
         this.userRepository = userRepository;
     }
 
-    public Team createTeam(TeamForm form) {
+    public Team createTeam(TeamForm form, User loginUser) {
         if (form.getName() == null || form.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("팀 이름을 입력해주세요.");
         }
 
-        if (form.getLeaderUsername() == null || form.getLeaderUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("리더 아이디를 입력해주세요.");
-        }
-
-        User leader = userRepository.findByUsername(form.getLeaderUsername().trim())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리더 아이디입니다."));
-
-        Team team = new Team(form.getName().trim(), form.getDescription(), leader);
+        Team team = new Team(form.getName().trim(), form.getDescription(), loginUser);
         Team savedTeam = teamRepository.save(team);
 
-        TeamMember leaderMember = new TeamMember(savedTeam, leader);
+        TeamMember leaderMember = new TeamMember();
+        leaderMember.setTeam(savedTeam);
+        leaderMember.setUser(loginUser);
+        leaderMember.setRole(MemberRoleType.LEADER);
+        leaderMember.setStatus(MemberStatus.ACCEPTED);
         teamMemberRepository.save(leaderMember);
 
-        if (form.getMemberUsernames() != null && !form.getMemberUsernames().trim().isEmpty()) {
-            String[] memberArray = form.getMemberUsernames().split(",");
+        if (form.getMemberEmails() != null && !form.getMemberEmails().trim().isEmpty()) {
+            String[] memberArray = form.getMemberEmails().split(",");
 
-            for (String memberUsername : memberArray) {
-                String trimmed = memberUsername.trim();
+            for (String memberEmail : memberArray) {
+                String trimmed = memberEmail.trim();
 
                 if (trimmed.isEmpty()) {
                     continue;
                 }
 
-                User member = userRepository.findByUsername(trimmed)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀원 아이디입니다: " + trimmed));
+                User member = userRepository.findByEmail(trimmed)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀원 이메일입니다: " + trimmed));
 
-                if (!member.getId().equals(leader.getId())) {
+                if (!member.getId().equals(loginUser.getId())) {
                     boolean alreadyExists = teamMemberRepository.existsByTeamAndUser(savedTeam, member);
+
                     if (!alreadyExists) {
-                        TeamMember memberEntity = new TeamMember(savedTeam, member);
+                        TeamMember memberEntity = new TeamMember();
+                        memberEntity.setTeam(savedTeam);
+                        memberEntity.setUser(member);
+                        memberEntity.setRole(MemberRoleType.MEMBER);
+                        memberEntity.setStatus(MemberStatus.ACCEPTED);
                         teamMemberRepository.save(memberEntity);
                     }
                 }
@@ -83,7 +88,6 @@ public class TeamService {
 
         List<TeamMember> members = teamMemberRepository.findByTeam(team);
         teamMemberRepository.deleteAll(members);
-
         teamRepository.delete(team);
     }
 
@@ -106,15 +110,14 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
     }
 
-    public String getMemberUsernames(Long teamId) {
+    public String getMemberEmails(Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
 
         List<TeamMember> members = teamMemberRepository.findByTeam(team);
 
         return members.stream()
-                .map(tm -> tm.getUser().getUsername())
-                .reduce((a, b) -> a + ", " + b)
-                .orElse("");
+                .map(teamMember -> teamMember.getUser().getEmail())
+                .collect(Collectors.joining(", "));
     }
 }
