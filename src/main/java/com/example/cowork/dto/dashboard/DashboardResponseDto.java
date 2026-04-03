@@ -18,4 +18,5 @@ public class DashboardResponseDto {
 	
 	private int totalPages;
 	private long totalElements;
+
 }

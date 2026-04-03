@@ -67,8 +67,14 @@
     <header class="header">
         <div class="logo">Co-Work</div>
         <nav class="user-menu">
-            <a th:href="@{/api/user/logout}"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
-            <form th:href="@{/api/teams/{team_id}/leave}"><i class="fas fa-running"></i> 팀 탈퇴</form>
+		<nav class="user-menu">
+		    <form th:action="@{/api/user/logout}" method="post" 
+		          onclick="this.submit();" 
+		          style="display: inline; cursor: pointer; color: inherit;">
+		        <i class="fas fa-sign-out-alt"></i> 로그아웃
+		    </form>
+		</nav>
+		<!--  <form th:href="@{/api/teams/{team_id}}"><i class="fas fa-running"></i> 팀 탈퇴</form> -->
         </nav>
     </header>
 
@@ -77,20 +83,20 @@
             <h1 class="main-title">내 팀 프로젝트</h1>
             <p class="sub-title" style="display: flex; justify-content: space-between; align-items: center;">
 		        <span>
-		            <span th:text="${dashboard.userName}" style="font-weight: 600; color: #333;">홍길동</span>님, 참여 중인 팀 프로젝트 목록입니다.
+		            <span th:text="${dashboard.userName}" style="font-weight: 600; color: #333;">홍길동</span>, 참여 중인 팀 프로젝트 목록입니다.
 		        </span>
 		
-		        <a th:href="@{/teams/new}" class="btn-create">
+<!-- 				<a th:href="@{/team/create}" class="btn-create">
 		            <i class="fas fa-plus"></i> 새 프로젝트 생성
-		        </a>
+		        </a> -->
 		    </p>
 		</section>
 
         <div th:if="${#lists.isEmpty(dashboard.teams)}" class="empty-message">
             <p>아직 소속된 팀이 없습니다. 새로운 팀을 만들어보세요!</p>
             
-            <a th:href="/team/create" class="btn-create-new">
-	        <i class="fas fa-plus-circle"></i> 새 프로젝트 만들기 </a>
+            <a th:href="@{/team/create}" class="btn-create-new">
+	        <i class="fas fa-plus-circle"></i> 새 프로젝트 생성 </a>
         </div>
 
         <div th:unless="${#lists.isEmpty(dashboard.teams)}" class="team-grid">
@@ -107,7 +113,7 @@
 				</p>
    					
                 
-                <a th:href="@{/teams/{team_id}/files}" class="btn-open">
+                <a th:href="@{/teams/{teamId}/files(teamId=${team.id})}" class="btn-open">
                     <i class="far fa-calendar-alt"></i> 프로젝트 열기
                 </a>
             </div>
@@ -134,18 +140,6 @@
 		</div>
 
  
-DashboardService
-
-TeamRepository
-
-
-
-
-TeamCardDto
-
-
-DashboardService
-dashboard.html
     </main>
 
 </body>
