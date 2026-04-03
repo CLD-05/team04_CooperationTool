@@ -1,5 +1,6 @@
 package com.example.cowork.entity;
 
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,4 +54,3 @@ public class Team {
     @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Task> tasks = new ArrayList<>();
 }
-
