@@ -28,7 +28,7 @@ public class FileEntity {
     @Column(name = "file_path", length = 512, nullable = false)
     private String filePath; // 맥북/서버에 저장된 실제 경로
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
