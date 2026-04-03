@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co-Work - 대시보드</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background: #f9fafb; color: #1f2937; font-size: 14px; }
+
+        /* ── 헤더 ── */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 0 40px; height: 56px; background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; }
+        .logo { font-size: 18px; font-weight: 800; color: #6366f1; letter-spacing: -0.3px; }
+        .btn-logout { background: none; border: none; cursor: pointer; color: #6b7280; font-size: 13px; font-family: inherit; display: flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 6px; transition: background 0.15s; }
+        .btn-logout:hover { background: #f3f4f6; color: #1f2937; }
+
+        /* ── 레이아웃 ── */
+        .page-wrapper { display: flex; gap: 24px; max-width: 1280px; margin: 0 auto; padding: 36px 40px; align-items: flex-start; }
+        .main-content { flex: 1; min-width: 0; }
+
+        /* ── 페이지 헤더 ── */
+        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; }
+        .page-title { font-size: 26px; font-weight: 800; color: #111827; }
+        .page-sub { font-size: 13px; color: #9ca3af; margin-top: 4px; }
+
+        /* ── 버튼 ── */
+        .btn-primary { background: #6366f1; color: #fff; border: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: background 0.15s; }
+        .btn-primary:hover { background: #4f46e5; }
+
+        /* ── 팀 그리드 ── */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+        .team-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; transition: box-shadow 0.2s, transform 0.2s; }
+        .team-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .card-icon { width: 38px; height: 38px; background: #eef2ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6366f1; font-size: 17px; margin-bottom: 12px; }
+        .card-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .card-desc { font-size: 13px; color: #6b7280; line-height: 1.5; flex-grow: 1; margin-bottom: 16px; }
+        .btn-open { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 600; color: #374151; text-decoration: none; transition: background 0.15s; margin-bottom: 8px; }
+        .btn-open:hover { background: #f3f4f6; }
+        .btn-leave { width: 100%; padding: 8px; background: none; border: 1px solid #fca5a5; border-radius: 8px; font-size: 12px; font-weight: 600; color: #dc2626; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s; }
+        .btn-leave:hover { background: #fef2f2; }
+
+        .empty-box { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-box p { margin-bottom: 16px; font-size: 15px; }
+
+        /* ── 초대 패널 ── */
+        .invite-panel { width: 260px; flex-shrink: 0; }
+        .panel-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+        .panel-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .badge { background: #6366f1; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+
+        .invite-item { padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
+        .invite-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .invite-team { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+        .invite-by { font-size: 12px; color: #9ca3af; margin-bottom: 12px; }
+        .invite-actions { display: flex; gap: 8px; }
+        .btn-accept  { flex: 1; background: #6366f1; color: #fff; border: none; border-radius: 6px; padding: 7px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .btn-accept:hover { background: #4f46e5; }
+        .btn-decline { flex: 1; background: #fff; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 6px; padding: 7px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+        .btn-decline:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+        .invite-empty { font-size: 13px; color: #9ca3af; text-align: center; padding: 20px 0; }
+
+        /* ── 플래시 메시지 ── */
+        .flash-ok  { background: #f0fdf4; border: 1px solid #86efac; color: #16a34a; border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; font-size: 13px; }
+        .flash-err { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <span class="logo">Co-Work</span>
+    <form th:action="@{/api/user/logout}" method="post">
+        <button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
+    </form>
+</header>
+
+<div class="page-wrapper">
+    <div class="main-content">
+
+        <div th:if="${inviteMessage}" class="flash-ok"  th:text="${inviteMessage}"></div>
+        <div th:if="${inviteError}"   class="flash-err" th:text="${inviteError}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">내 팀 프로젝트</h1>
+                <p class="page-sub">
+                    <span th:text="${dashboard.userName}">홍길동</span>, 참여 중인 팀 프로젝트 목록입니다.
+                </p>
+            </div>
+            <a th:href="@{/teams/new}" class="btn-primary">
+                <i class="fas fa-plus"></i> 팀 프로젝트 생성하기
+            </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(dashboard.teams)}" class="empty-box">
+            <p>아직 소속된 팀이 없습니다.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(dashboard.teams)}" class="team-grid">
+            <div th:each="team : ${dashboard.teams}" class="team-card">
+                <div class="card-icon"><i class="fas fa-users"></i></div>
+                <div class="card-name" th:text="${team.name}">팀 이름</div>
+                <div class="card-desc" th:text="${team.description ?: '프로젝트 설명이 없습니다.'}">설명</div>
+                <a th:href="@{/teams/{id}/files(id=${team.id})}" class="btn-open">
+                    <i class="fas fa-folder-open"></i> 프로젝트 열기
+                </a>
+                <!-- 일반 멤버만 탈퇴 버튼 표시 -->
+                <form th:if="${!team.leader}"
+                      th:action="@{/teams/{id}/leave(id=${team.id})}" method="post"
+                      onsubmit="return confirm('팀을 탈퇴하시겠습니까?');">
+                    <button type="submit" class="btn-leave">
+                        <i class="fas fa-sign-out-alt"></i> 팀 탈퇴
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <aside class="invite-panel">
+        <div class="panel-card">
+            <div class="panel-title">
+                <i class="fas fa-envelope" style="color:#6366f1"></i> 초대 알림
+                <span class="badge" th:if="${!#lists.isEmpty(dashboard.invites)}"
+                      th:text="${#lists.size(dashboard.invites)}"></span>
+            </div>
+            <div th:if="${#lists.isEmpty(dashboard.invites)}" class="invite-empty">받은 초대가 없습니다.</div>
+            <div th:each="invite : ${dashboard.invites}" class="invite-item">
+                <div class="invite-team" th:text="${invite.teamName}">팀 이름</div>
+                <div class="invite-by" th:text="|${invite.leaderName}님이 초대했습니다|">팀장</div>
+                <div class="invite-actions">
+                    <form th:action="@{/dashboard/invites/{id}/accept(id=${invite.teamId})}" method="post">
+                        <button type="submit" class="btn-accept">수락</button>
+                    </form>
+                    <form th:action="@{/dashboard/invites/{id}/decline(id=${invite.teamId})}" method="post">
+                        <button type="submit" class="btn-decline">거절</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+</body>
+</html>

@@ -1,53 +1,57 @@
 package com.example.cowork.controller;
 
-import com.example.cowork.dto.TeamForm;
+import com.example.cowork.dto.team.TeamForm;
 import com.example.cowork.entity.Team;
 import com.example.cowork.entity.User;
 import com.example.cowork.repository.UserRepository;
 import com.example.cowork.service.TeamService;
 
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/teams")
+@RequiredArgsConstructor
 public class TeamController {
 
     private final TeamService teamService;
     private final UserRepository userRepository;
 
-    public TeamController(TeamService teamService, UserRepository userRepository) {
-        this.teamService = teamService;
-        this.userRepository = userRepository;
-    }
-
+    // 팀 생성 폼
     @GetMapping("/new")
-    public String newTeamForm(Model model) {
+    public String newTeamForm(HttpSession session, Model model) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/api/user/login";
+        }
         model.addAttribute("teamForm", new TeamForm());
         return "team/team_form";
     }
 
+    // 팀 생성 처리 → 완료 후 대시보드로
     @PostMapping("/new")
-    public String createTeam(@ModelAttribute("teamForm") TeamForm teamForm, Model model) {
-        try {
-            if (teamForm.getLoginEmail() == null || teamForm.getLoginEmail().trim().isEmpty()) {
-                throw new IllegalArgumentException("로그인 이메일을 입력해주세요.");
-            }
+    public String createTeam(@ModelAttribute("teamForm") TeamForm teamForm,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
 
-            User loginUser = userRepository.findByEmail(teamForm.getLoginEmail().trim())
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/api/user/login";
+        }
+
+        try {
+            User loginUser = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-            Team savedTeam = teamService.createTeam(teamForm, loginUser);
+            teamService.createTeam(teamForm, loginUser);
 
-            model.addAttribute("teamId", savedTeam.getId());
-            model.addAttribute("teamName", savedTeam.getName());
-            model.addAttribute("leaderEmail", savedTeam.getLeader().getEmail());
-            model.addAttribute("memberEmails", teamService.getMemberEmails(savedTeam.getId()));
-            model.addAttribute("description", savedTeam.getDescription());
-            model.addAttribute("loginEmail", loginUser.getEmail());
+            redirectAttributes.addFlashAttribute("message", "팀이 성공적으로 생성되었습니다!");
+            return "redirect:/dashboard";
 
-            return "team/team_complete";
         } catch (Exception e) {
             model.addAttribute("teamForm", teamForm);
             model.addAttribute("errorMessage", e.getMessage());
@@ -55,55 +59,55 @@ public class TeamController {
         }
     }
 
-    @GetMapping("/{teamId}")
-    public String teamDetail(@PathVariable Long teamId,
-                             @RequestParam(required = false) String loginEmail,
-                             Model model) {
-        Team team = teamService.getTeamById(teamId);
-
-        model.addAttribute("teamId", team.getId());
-        model.addAttribute("teamName", team.getName());
-        model.addAttribute("leaderEmail", team.getLeader().getEmail());
-        model.addAttribute("description", team.getDescription());
-        model.addAttribute("memberEmails", teamService.getMemberEmails(teamId));
-        model.addAttribute("loginEmail", loginEmail);
-
-        return "team/team_complete";
-    }
-
+    // 팀 삭제 (팀 관리 페이지에서 팀장만 가능 → TeamViewController에서 권한 체크 후 호출)
     @PostMapping("/{teamId}/delete")
     public String deleteTeam(@PathVariable Long teamId,
-                             @RequestParam String loginEmail,
-                             Model model) {
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/api/user/login";
+        }
+
         try {
-            User loginUser = userRepository.findByEmail(loginEmail.trim())
+            User loginUser = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
             teamService.deleteTeam(teamId, loginUser);
 
-            model.addAttribute("message", "팀이 성공적으로 삭제되었습니다.");
-            return "team/team_deleted";
+            redirectAttributes.addFlashAttribute("message", "팀이 성공적으로 삭제되었습니다.");
+            return "redirect:/dashboard";
+
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "team/team_error";
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/view/teams/" + teamId + "/members";
         }
     }
 
+    // 팀 탈퇴 (프로젝트 열기 페이지에서 일반 멤버가 사용)
     @PostMapping("/{teamId}/leave")
     public String leaveTeam(@PathVariable Long teamId,
-                            @RequestParam String loginEmail,
-                            Model model) {
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/api/user/login";
+        }
+
         try {
-            User loginUser = userRepository.findByEmail(loginEmail.trim())
+            User loginUser = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
             teamService.leaveTeam(teamId, loginUser);
 
-            model.addAttribute("message", "팀에서 성공적으로 탈퇴했습니다.");
-            return "team/team_deleted";
+            redirectAttributes.addFlashAttribute("message", "팀에서 탈퇴했습니다.");
+            return "redirect:/dashboard";
+
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "team/team_error";
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/teams/" + teamId + "/files";
         }
     }
 }

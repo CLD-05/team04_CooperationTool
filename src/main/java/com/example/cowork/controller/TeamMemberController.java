@@ -4,8 +4,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.cowork.dto.MemberInviteRequest;
-import com.example.cowork.dto.TeamMemberResponse;
+import com.example.cowork.dto.team.MemberInviteRequest;
+import com.example.cowork.dto.team.TeamMemberResponse;
 import com.example.cowork.service.TeamMemberService;
 
 import lombok.RequiredArgsConstructor;

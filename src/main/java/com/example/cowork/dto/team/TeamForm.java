@@ -1,4 +1,4 @@
-package com.example.cowork.dto;
+package com.example.cowork.dto.team;
 
 public class TeamForm {
 

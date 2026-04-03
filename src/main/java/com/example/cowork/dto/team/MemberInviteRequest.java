@@ -1,5 +1,13 @@
 package com.example.cowork.dto.team;
 
-public class MemberInviteRequest {
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberInviteRequest {
+	private String email;
 }

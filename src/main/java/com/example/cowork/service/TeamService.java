@@ -1,6 +1,6 @@
 package com.example.cowork.service;
 
-import com.example.cowork.dto.TeamForm;
+import com.example.cowork.dto.team.TeamForm;
 import com.example.cowork.entity.Team;
 import com.example.cowork.entity.TeamMember;
 import com.example.cowork.entity.User;
@@ -40,6 +40,7 @@ public class TeamService {
         Team team = new Team(form.getName().trim(), form.getDescription(), loginUser);
         Team savedTeam = teamRepository.save(team);
 
+        // 팀장은 바로 ACCEPTED
         TeamMember leaderMember = new TeamMember();
         leaderMember.setTeam(savedTeam);
         leaderMember.setUser(loginUser);
@@ -47,28 +48,25 @@ public class TeamService {
         leaderMember.setStatus(MemberStatus.ACCEPTED);
         teamMemberRepository.save(leaderMember);
 
+        // 초대한 멤버는 INVITED — 수락해야 참여됨
         if (form.getMemberEmails() != null && !form.getMemberEmails().trim().isEmpty()) {
             String[] memberArray = form.getMemberEmails().split(",");
 
             for (String memberEmail : memberArray) {
                 String trimmed = memberEmail.trim();
-
-                if (trimmed.isEmpty()) {
-                    continue;
-                }
+                if (trimmed.isEmpty()) continue;
 
                 User member = userRepository.findByEmail(trimmed)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀원 이메일입니다: " + trimmed));
 
                 if (!member.getId().equals(loginUser.getId())) {
                     boolean alreadyExists = teamMemberRepository.existsByTeamAndUser(savedTeam, member);
-
                     if (!alreadyExists) {
                         TeamMember memberEntity = new TeamMember();
                         memberEntity.setTeam(savedTeam);
                         memberEntity.setUser(member);
                         memberEntity.setRole(MemberRoleType.MEMBER);
-                        memberEntity.setStatus(MemberStatus.ACCEPTED);
+                        memberEntity.setStatus(MemberStatus.INVITED); // ACCEPTED → INVITED
                         teamMemberRepository.save(memberEntity);
                     }
                 }
@@ -114,10 +112,8 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
 
-        List<TeamMember> members = teamMemberRepository.findByTeam(team);
-
-        return members.stream()
-                .map(teamMember -> teamMember.getUser().getEmail())
+        return teamMemberRepository.findByTeam(team).stream()
+                .map(tm -> tm.getUser().getEmail())
                 .collect(Collectors.joining(", "));
     }
 }

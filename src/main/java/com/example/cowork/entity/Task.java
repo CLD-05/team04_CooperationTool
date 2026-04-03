@@ -27,46 +27,49 @@ import lombok.ToString;
 @ToString(exclude = "team")
 @Entity
 public class Task {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "team_id", nullable = false)
-	private Team team;
-	
-	@Setter
-	private String title;
-	
-	@Setter
-	private String content;
-	
-	@Setter
-	@Enumerated(EnumType.STRING)
-	@Column(name = "task_status", columnDefinition = "VARCHAR(50)")
-	private TaskStatus taskStatus;
-	
-	@Setter
-	@Column(name = "start_at")
-	private LocalDateTime startAt;
-	
-	@Setter
-	@Column(name = "end_at")
-	private LocalDateTime endAt;
-	
-	@CreationTimestamp
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
 
-	public void updateTitleAndContentAndTaskStatusAndStartAtAndEndAt(String title, String content,
-			TaskStatus taskStatus, LocalDateTime startAt, LocalDateTime endAt) {
-		this.title = title;
-		this.content = content;
-		this.taskStatus = taskStatus;
-		this.startAt = startAt;
-		this.endAt = endAt;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
+
+    @Setter
+    private String title;
+
+    @Setter
+    private String content;
+
+    @Setter
+    private String author;  // 작성자
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(name = "task_status", columnDefinition = "VARCHAR(50)")
+    private TaskStatus taskStatus;
+
+    @Setter
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
+
+    @Setter
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    public void updateTitleAndContentAndAuthorAndTaskStatusAndStartAtAndEndAt(
+            String title, String content, String author,
+            TaskStatus taskStatus, LocalDateTime startAt, LocalDateTime endAt) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.taskStatus = taskStatus;
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
 }

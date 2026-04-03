@@ -15,37 +15,34 @@ import lombok.ToString;
 @Getter
 @ToString
 public class TaskResponseDto {
-	
-	private Long id;
-	
-	private String title;
-	private String content;
-	
-	private LocalDateTime startAt;
-	private LocalDateTime endAt;
-	
-	private TaskStatus taskStatus;
-	
-	private Long teamId;
-	
-	public static TaskResponseDto of(String title, String content, LocalDateTime startAt, LocalDateTime endAt, TaskStatus taskStatus) {
-		return TaskResponseDto.of(null, title, content, startAt, endAt, taskStatus, null);
-	}
-	
-	// 조회용 DTO
-	public static TaskResponseDto of(Long id, String title, String content, LocalDateTime startAt, LocalDateTime endAt, TaskStatus taskStatus, Long teamId) {
-		return new TaskResponseDto(id, title, content, startAt, endAt, taskStatus, teamId);
-	}
-	
-	// Entity -> DTO 변환
-	public static TaskResponseDto from(Task task) {
-		return new TaskResponseDto(
-									task.getId(),
-									task.getTitle(),
-									task.getContent(),
-									task.getStartAt(),
-									task.getEndAt(),
-									task.getTaskStatus(),
-									task.getTeam() !=null ? task.getTeam().getId() : null);
-	}
+
+    private Long id;
+    private String title;
+    private String content;
+    private String author;       // 작성자
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
+    private TaskStatus taskStatus;
+    private Long teamId;
+
+    // Entity -> DTO 변환
+    public static TaskResponseDto from(Task task) {
+        return new TaskResponseDto(
+                task.getId(),
+                task.getTitle(),
+                task.getContent(),
+                task.getAuthor(),
+                task.getStartAt(),
+                task.getEndAt(),
+                task.getTaskStatus(),
+                task.getTeam() != null ? task.getTeam().getId() : null
+        );
+    }
+
+    // 조회용 (author 포함)
+    public static TaskResponseDto of(Long id, String title, String content, String author,
+                                     LocalDateTime startAt, LocalDateTime endAt,
+                                     TaskStatus taskStatus, Long teamId) {
+        return new TaskResponseDto(id, title, content, author, startAt, endAt, taskStatus, teamId);
+    }
 }

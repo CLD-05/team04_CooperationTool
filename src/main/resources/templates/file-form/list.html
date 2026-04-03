@@ -3,140 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>팀 자료실</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    
+    <title>Co-Work - 파일 공유</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* 공통 레이아웃 스타일 */
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: Arial, sans-serif; background-color: #f6f7fb; color: #222; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-        
-        .team-header h1 { margin: 0; font-size: 32px; font-weight: 700; }
-        .team-header p { margin: 8px 0 0; color: #777; font-size: 14px; }
-        
-        .menu-tabs { display: flex; margin-top: 24px; background: #ececf1; border-radius: 999px; padding: 4px; gap: 4px; }
-        .menu-tabs a { flex: 1; text-align: center; padding: 12px 0; text-decoration: none; color: #444; border-radius: 999px; font-size: 14px; }
-        .menu-tabs a.active { background: white; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        
-        .content-box { margin-top: 24px; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        
-        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .content-header h2 { margin: 0; font-size: 20px; }
-        
-        .add-btn { background: #0b1020; color: white; border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer; text-decoration: none;}
-        .add-btn:hover { background: #1c2340; color: white;}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background: #f9fafb; color: #1f2937; font-size: 14px; }
 
-        /* 파일 테이블 스타일 (부트스트랩 테이블 활용) */
-        .table th { background-color: #f8f9fa; text-align: center; font-weight: 600;}
-        .table td { text-align: center; vertical-align: middle; }
-        .action-icon { text-decoration: none; font-size: 18px; margin: 0 5px; cursor: pointer;}
-        
-        /* 페이징 스타일 적용 */
-        .page-wrap { margin-top: 30px; }
-        .custom-pagination { gap: 8px; }
-        .custom-pagination .page-item .page-link { border: none; background: transparent; color: #333; min-width: 36px; height: 36px; padding: 0 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: none; }
-        .custom-pagination .page-item .page-link.number { font-size: 15px; }
-        .custom-pagination .page-item .page-link.arrow { font-size: 22px; color: #bdbdbd; }
-        .custom-pagination .page-item.active .page-link { border: 1px solid #4a90ff; color: #4a90ff; background-color: white; }
-        .custom-pagination .page-item.disabled .page-link { color: #d6d6d6; pointer-events: none; background: transparent; }
+        /* ── 헤더 ── */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 0 40px; height: 56px; background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; }
+        .logo { font-size: 18px; font-weight: 800; color: #6366f1; text-decoration: none; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .btn-text { color: #6b7280; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; background: none; border: none; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .btn-text:hover { background: #f3f4f6; color: #1f2937; }
+        .btn-manage { background: #6366f1; color: #fff; border: none; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+        .btn-manage:hover { background: #4f46e5; color: #fff; }
+        .btn-danger { color: #dc2626; border: 1px solid #fca5a5; background: #fef2f2; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+        .btn-danger:hover { background: #fee2e2; }
+
+        /* ── 컨테이너 ── */
+        .container { max-width: 900px; margin: 36px auto; padding: 0 40px; }
+
+        /* ── 팀 헤더 ── */
+        .team-header { margin-bottom: 20px; }
+        .team-header h1 { font-size: 26px; font-weight: 800; color: #111827; }
+        .team-header p  { font-size: 13px; color: #9ca3af; margin-top: 5px; }
+
+        /* ── 탭 ── */
+        .menu-tabs { display: flex; background: #f3f4f6; border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 24px; }
+        .menu-tabs a { flex: 1; text-align: center; padding: 9px 0; text-decoration: none; color: #6b7280; border-radius: 99px; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+        .menu-tabs a.active { background: #fff; color: #1f2937; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+        /* ── 카드 ── */
+        .content-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; }
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .content-header h2 { font-size: 16px; font-weight: 700; }
+        .btn-upload { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+        .btn-upload:hover { background: #4f46e5; }
+        #fileInput { display: none; }
+
+        /* ── 테이블 ── */
+        table { width: 100%; border-collapse: collapse; }
+        thead th { padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        thead th.center { text-align: center; }
+        tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+        tbody td.center { text-align: center; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #fafafa; }
+
+        .file-name { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .file-icon { color: #6366f1; font-size: 13px; }
+
+        .btn-dl { color: #6366f1; background: #eef2ff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s; }
+        .btn-dl:hover { background: #e0e7ff; }
+        .btn-del { color: #9ca3af; background: none; border: 1px solid #e5e7eb; padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+        .btn-del:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+
+        .empty-row td { text-align: center; padding: 48px; color: #9ca3af; }
+
+        /* ── 페이징 ── */
+        .paging { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 24px; }
+        .paging a { padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px; text-decoration: none; color: #374151; font-size: 13px; transition: background 0.15s; }
+        .paging a:hover { background: #f3f4f6; }
+        .paging a.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+        .paging a.disabled { color: #d1d5db; pointer-events: none; }
     </style>
 </head>
 <body>
-<div class="container">
 
+<header class="header">
+    <a th:href="@{/dashboard}" class="logo">Co-Work</a>
+    <div class="header-right">
+        <a th:href="@{/dashboard}" class="btn-text"><i class="fas fa-arrow-left"></i> 대시보드</a>
+
+        <th:block th:if="${isLeader}">
+            <a th:href="@{/view/teams/{id}/members(id=${teamId})}" class="btn-manage">
+                <i class="fas fa-cog"></i> 팀 관리
+            </a>
+            <form th:action="@{/teams/{id}/delete(id=${teamId})}" method="post"
+                  onsubmit="return confirm('팀을 삭제하면 모든 데이터가 사라집니다. 계속할까요?');">
+                <button type="submit" class="btn-danger"><i class="fas fa-trash-alt"></i> 팀 삭제</button>
+            </form>
+        </th:block>
+
+        <th:block th:unless="${isLeader}">
+            <form th:action="@{/teams/{id}/leave(id=${teamId})}" method="post"
+                  onsubmit="return confirm('팀에서 탈퇴하시겠습니까?');">
+                <button type="submit" class="btn-danger"><i class="fas fa-sign-out-alt"></i> 팀 탈퇴</button>
+            </form>
+        </th:block>
+    </div>
+</header>
+
+<div class="container">
     <div class="team-header">
-        <h1 th:text="${teamName != null ? teamName : '팀 스페이스'}">팀 이름</h1>
-        <p>프로젝트 자료 및 일정 관리</p>
+        <h1 th:text="${teamName}">팀 이름</h1>
+        <p th:text="${teamDescription}">프로젝트 자료 및 일정 관리</p>
     </div>
 
     <div class="menu-tabs">
-        <a th:href="@{/teams/{team_id}/files(team_id=${teamId})}" class="active">파일 공유</a>
-        <a th:href="@{/teams/{team_id}/calendar(team_id=${teamId})}">공동 캘린더</a>
+        <a th:href="@{/teams/{id}/files(id=${teamId})}" class="active">파일 공유</a>
+        <a th:href="@{/teams/{id}/calendar(id=${teamId})}">공동 캘린더</a>
     </div>
 
-    <div class="content-box">
+    <div class="content-card">
         <div class="content-header">
             <h2>팀 자료실</h2>
-            <a th:href="@{/teams/{teamId}/files/upload(teamId=${teamId})}" class="add-btn">+ 새 파일 업로드</a>
+            <div>
+                <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-upload"></i> 파일 업로드
+                </button>
+                <form id="uploadForm" th:action="@{/teams/{id}/files/upload(id=${teamId})}"
+                      method="post" enctype="multipart/form-data" style="display:none;">
+                    <input type="file" id="fileInput" name="file">
+                </form>
+            </div>
         </div>
 
-        <table class="table table-hover">
+        <table>
             <thead>
                 <tr>
                     <th>파일명</th>
-                    <th>업로더 ID</th>
-                    <th>업로드 시간</th>
-                    <th>다운로드</th>
-                    <th>삭제</th>
+                    <th class="center">업로드 시간</th>
+                    <th class="center">다운로드</th>
+                    <th class="center">삭제</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:if="${files.totalElements == 0}">
-                    <td colspan="5" class="text-center py-4 text-muted">현재 등록된 파일이 없습니다.</td>
+                <tr th:if="${files.totalElements == 0}" class="empty-row">
+                    <td colspan="4">업로드된 파일이 없습니다.</td>
                 </tr>
-
                 <tr th:each="file : ${files.content}">
-                    <td class="text-start" th:text="${file.fileName}">파일명.txt</td>
-                    <td th:text="${file.uploaderId}">1</td>
-                    <td th:text="${file.createdAt}">2026-03-31 15:30</td>
-                    
                     <td>
-                        <a th:href="@{/teams/{teamId}/files/{fileId}/download(teamId=${teamId}, fileId=${file.id})}" class="action-icon" title="다운로드">
-                            💾
+                        <div class="file-name">
+                            <i class="fas fa-file file-icon"></i>
+                            <span th:text="${file.fileName}">파일명</span>
+                        </div>
+                    </td>
+                    <td class="center" th:text="${file.createdAt}">2026-04-01</td>
+                    <td class="center">
+                        <a th:href="@{/teams/{tid}/files/{fid}/download(tid=${teamId},fid=${file.id})}" class="btn-dl">
+                            <i class="fas fa-download"></i> 다운로드
                         </a>
                     </td>
-                    
-                    <td>
-                        <form th:action="@{/teams/{teamId}/files/{fileId}/delete(teamId=${teamId}, fileId=${file.id})}" method="post" style="display:inline;">
-                            <button type="submit" class="action-icon" style="background:none; border:none; color: #ff4d4f;" onclick="return confirm('정말 이 파일을 삭제하시겠습니까?');" title="삭제">
-                                🗑
-                            </button>
+                    <td class="center">
+                        <form th:action="@{/teams/{tid}/files/{fid}/delete(tid=${teamId},fid=${file.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn-del"><i class="fas fa-trash"></i> 삭제</button>
                         </form>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <div class="page-wrap">
-            <nav aria-label="Page navigation">
-                <ul class="pagination custom-pagination justify-content-center">
-                    
-                    <li class="page-item" th:classappend="${files.first} ? 'disabled' : ''">
-                        <a class="page-link arrow" th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${files.number - 1})}"> ‹ </a>
-                    </li>
-
-                    <li class="page-item" 
-                        th:each="pageNumber : ${#numbers.sequence(0, (files.totalPages > 0 ? files.totalPages - 1 : 0))}"
-                        th:classappend="${pageNumber == files.number} ? 'active' : ''">
-                        <a class="page-link number" 
-                           th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${pageNumber})}"
-                           th:text="${pageNumber + 1}">1</a>
-                    </li>			
-
-                    <li class="page-item" th:classappend="${files.last} ? 'disabled' : ''">
-                        <a class="page-link arrow" th:href="@{/teams/{teamId}/files(teamId=${teamId}, page=${files.number + 1})}"> › </a>
-                    </li>			        
-                    
-                </ul>
-            </nav>
+        <div class="paging" th:if="${files.totalPages > 1}">
+            <a th:href="@{/teams/{id}/files(id=${teamId},page=${files.number-1})}"
+               th:classappend="${files.first} ? 'disabled'">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            <th:block th:each="i : ${#numbers.sequence(0, files.totalPages - 1)}">
+                <a th:href="@{/teams/{id}/files(id=${teamId},page=${i})}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == files.number} ? 'active'"></a>
+            </th:block>
+            <a th:href="@{/teams/{id}/files(id=${teamId},page=${files.number+1})}"
+               th:classappend="${files.last} ? 'disabled'">
+                <i class="fas fa-angle-right"></i>
+            </a>
         </div>
     </div>
 </div>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    const errorMessage = /*[[${errorMessage}]]*/ null;
-    const successMsg = /*[[${successMessage}]]*/ null;
-    
-    if (errorMessage) {
-        alert(errorMessage);
-    } else if (successMsg) {
-        alert(successMsg);
-    }
-    /*]]>*/
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        if (this.files.length > 0) document.getElementById('uploadForm').submit();
+    });
 </script>
 </body>
 </html>

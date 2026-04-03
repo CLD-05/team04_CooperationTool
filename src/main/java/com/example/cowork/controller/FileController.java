@@ -20,9 +20,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
 import com.example.cowork.entity.FileEntity;
-import com.example.cowork.file.dto.FileResponseDto;
+import com.example.cowork.entity.Team;
+import com.example.cowork.dto.file.FileResponseDto;
 import com.example.cowork.service.FileService;
+import com.example.cowork.service.TeamMemberService;
+import com.example.cowork.service.TeamService;
+import com.example.cowork.type.MemberRoleType;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -31,56 +36,73 @@ import lombok.RequiredArgsConstructor;
 public class FileController {
 
     private final FileService fileService;
+    private final TeamMemberService teamMemberService;
+    private final TeamService teamService;
 
-    // 1. 파일 목록 조회 (GET)
+    // 1. 파일 목록 조회 (GET) — 업로드 폼도 이 페이지에서 인라인 처리
     @GetMapping
     public String fileList(@PathVariable("team_id") Long teamId,
                            @RequestParam(value = "page", defaultValue = "0") int page,
+                           HttpSession session,
                            Model model) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/api/user/login";
+        }
+
         Pageable pageable = PageRequest.of(page, 10);
         Page<FileResponseDto> files = fileService.getTeamFiles(teamId, pageable);
+
+        boolean isLeader = false;
+        try {
+            isLeader = teamMemberService.getMemberInfo(teamId, userId).getRole() == MemberRoleType.LEADER;
+        } catch (Exception ignored) {}
+
+        Team team = teamService.getTeamById(teamId);
+
         model.addAttribute("files", files);
         model.addAttribute("teamId", teamId);
+        model.addAttribute("teamName", team.getName());
+        model.addAttribute("teamDescription", team.getDescription() != null ? team.getDescription() : "프로젝트 자료 및 일정 관리");
+        model.addAttribute("isLeader", isLeader);
         return "file-form/list";
     }
 
-    // 2. 파일 업로드 폼 (GET)
-    @GetMapping("/upload")
-    public String uploadForm(@PathVariable("team_id") Long teamId, Model model) {
-        model.addAttribute("teamId", teamId);
-        return "file-form/upload";
-    }
-
-    // 3. 파일 업로드 처리 (POST)
+    // 2. 파일 업로드 처리 (POST) — list 페이지의 hidden input form에서 바로 호출
     @PostMapping("/upload")
     public String uploadFile(@PathVariable("team_id") Long teamId,
                              @RequestParam("file") MultipartFile file,
+                             HttpSession session,
                              RedirectAttributes redirectAttributes) {
-        Long dummyUploaderId = 1L;
+
+        Long uploaderId = (Long) session.getAttribute("userId");
+        if (uploaderId == null) {
+            return "redirect:/api/user/login";
+        }
+
         try {
-            fileService.uploadFile(teamId, dummyUploaderId, file);
-            return "redirect:/teams/" + teamId + "/files";
+            fileService.uploadFile(teamId, uploaderId, file);
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/teams/" + teamId + "/files/upload";
         }
+        return "redirect:/teams/" + teamId + "/files";
     }
 
-    // 4. 파일 삭제 처리 (POST)
+    // 3. 파일 삭제 처리 (POST)
     @PostMapping("/{file_id}/delete")
     public String deleteFile(@PathVariable("team_id") Long teamId,
                              @PathVariable("file_id") Long fileId,
                              RedirectAttributes redirectAttributes) {
         try {
             fileService.deleteFile(fileId);
-            redirectAttributes.addFlashAttribute("successMessage", "파일이 안전하게 삭제되었습니다.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/teams/" + teamId + "/files";
     }
 
-    // 5. 파일 다운로드 (GET)
+    // 4. 파일 다운로드 (GET)
     @GetMapping("/{file_id}/download")
     public Object downloadFile(@PathVariable("team_id") Long teamId,
                                @PathVariable("file_id") Long fileId,
@@ -92,9 +114,9 @@ public class FileController {
                 throw new IllegalArgumentException("실제 파일이 서버에 존재하지 않습니다.");
             }
             String encodedFileName = UriUtils.encode(fileEntity.getFileName(), StandardCharsets.UTF_8);
-            String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + encodedFileName + "\"")
                     .body(resource);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
