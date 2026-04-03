@@ -1,4 +1,4 @@
-package com.example.cowork.dto;
+package com.example.cowork.dto.team;
 
 import com.example.cowork.type.MemberRoleType;
 import com.example.cowork.type.MemberStatus;

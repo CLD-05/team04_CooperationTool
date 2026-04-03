@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.cowork.entity.FileEntity;
-import com.example.cowork.file.dto.FileResponseDto;
+import com.example.cowork.dto.file.FileResponseDto;
 import com.example.cowork.repository.FileRepository;
 
 import lombok.RequiredArgsConstructor;

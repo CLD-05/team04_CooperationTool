@@ -1,307 +1,284 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>팀 공동 캘린더</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Co-Work - 공동 캘린더</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background: #f9fafb; color: #1f2937; font-size: 14px; }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f6f7fb;
-            color: #222;
-        }
+        /* ── 헤더 ── */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 0 40px; height: 56px; background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; }
+        .logo { font-size: 18px; font-weight: 800; color: #6366f1; text-decoration: none; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .btn-text { color: #6b7280; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; background: none; border: none; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .btn-text:hover { background: #f3f4f6; color: #1f2937; }
+        .btn-manage { background: #6366f1; color: #fff; border: none; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-family: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+        .btn-manage:hover { background: #4f46e5; color: #fff; }
+        .btn-danger { color: #dc2626; border: 1px solid #fca5a5; background: #fef2f2; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+        .btn-danger:hover { background: #fee2e2; }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 24px;
-        }
+        /* ── 컨테이너 ── */
+        .container { max-width: 900px; margin: 36px auto; padding: 0 40px; }
 
-        .team-header h1 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 700;
-        }
+        /* ── 팀 헤더 ── */
+        .team-header { margin-bottom: 20px; }
+        .team-header h1 { font-size: 26px; font-weight: 800; color: #111827; }
+        .team-header p  { font-size: 13px; color: #9ca3af; margin-top: 5px; }
 
-        .team-header p {
-            margin: 8px 0 0;
-            color: #777;
-            font-size: 14px;
-        }
+        /* ── 탭 ── */
+        .menu-tabs { display: flex; background: #f3f4f6; border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 24px; }
+        .menu-tabs a { flex: 1; text-align: center; padding: 9px 0; text-decoration: none; color: #6b7280; border-radius: 99px; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+        .menu-tabs a.active { background: #fff; color: #1f2937; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
-        .menu-tabs {
-            display: flex;
-            margin-top: 24px;
-            background: #ececf1;
-            border-radius: 999px;
-            padding: 4px;
-            gap: 4px;
-        }
-	
-        .menu-tabs a {
-            flex: 1;
-            text-align: center;
-            padding: 12px 0;
-            text-decoration: none;
-            color: #444;
-            border-radius: 999px;
-            font-size: 14px;
-        }
+        /* ── 카드 ── */
+        .content-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; }
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .content-header h2 { font-size: 16px; font-weight: 700; }
+        .btn-add { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+        .btn-add:hover { background: #4f46e5; }
 
-        .menu-tabs a.active {
-            background: white;
-            font-weight: 600;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-        }
+        /* ── 테이블 ── */
+        table { width: 100%; border-collapse: collapse; }
+        thead th { padding: 11px 16px; text-align: center; font-size: 12px; font-weight: 600; color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+        thead th.left { text-align: left; }
+        tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; text-align: center; }
+        tbody td.left { text-align: left; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #fafafa; }
 
-        .calendar-box {
-            margin-top: 24px;
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+        .badge-todo     { background: #fef9c3; color: #92400e; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+        .badge-progress { background: #dbeafe; color: #1e40af; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+        .badge-done     { background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
 
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+        .btn-edit { background: none; border: 1px solid #e5e7eb; color: #374151; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; margin-right: 4px; transition: background 0.15s; }
+        .btn-edit:hover { background: #f3f4f6; }
+        .btn-del  { background: none; border: 1px solid #e5e7eb; color: #9ca3af; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+        .btn-del:hover  { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
 
-        .calendar-header h2 {
-            margin: 0;
-            font-size: 20px;
-        }
+        .empty-row td { text-align: center; padding: 48px; color: #9ca3af; }
 
-        .add-btn {
-            background: #0b1020;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-size: 14px;
-            cursor: pointer;
-        }
+        .error-box { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; }
 
-        .date-group {
-            margin-bottom: 28px;
-        }
+        /* ── 페이징 ── */
+        .paging { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 24px; }
+        .paging a { padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px; text-decoration: none; color: #374151; font-size: 13px; transition: background 0.15s; }
+        .paging a:hover { background: #f3f4f6; }
+        .paging a.active { background: #6366f1; color: #fff; border-color: #6366f1; }
 
-        .date-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #1e2a4a;
-        }
+        /* ── 모달 ── */
+        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+        .modal-backdrop.open { display: flex; }
+        .modal { background: #fff; border-radius: 16px; padding: 32px; width: 480px; max-width: 95vw; position: relative; }
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+        .modal-sub   { font-size: 12px; color: #9ca3af; margin-bottom: 24px; }
+        .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 20px; cursor: pointer; color: #9ca3af; line-height: 1; }
+        .modal-close:hover { color: #1f2937; }
 
-        .schedule-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border: 1px solid #ececec;
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 16px;
-            background: #fff;
-        }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+        .field input, .field textarea, .field select { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; color: #111; background: #fff; transition: border-color 0.15s; }
+        .field input:focus, .field textarea:focus, .field select:focus { border-color: #6366f1; }
+        .field textarea { min-height: 80px; resize: vertical; }
+        .field-row { display: flex; gap: 12px; }
+        .field-row .field { flex: 1; }
 
-        .schedule-left h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
-            color: #1c2340;
-        }
-
-        .schedule-left p {
-            margin: 10px 0 0;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .schedule-time {
-            margin-top: 12px;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .badge {
-            display: inline-block;
-            margin-left: 8px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            vertical-align: middle;
-        }
-
-        .badge-done {
-            background: #dff7e8;
-            color: #2e8b57;
-        }
-
-        .badge-progress {
-            background: #e2ebff;
-            color: #4a6cf7;
-        }
-
-        .badge-pending {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .schedule-actions {
-            display: flex;
-            gap: 14px;
-            font-size: 18px;
-        }
-
-        .schedule-actions a {
-            text-decoration: none;
-            color: #444;
-        }
-
-        .schedule-actions a.delete {
-            color: #ff4d4f;
-        }
-        
-        .page-wrap {
- 			margin-top: 30px;
-		}
-
-		.custom-pagination {
-  			gap: 8px;
-		}
-
-		.custom-pagination .page-item .page-link {
-  			border: none;
-  			background: transparent;
-  			color: #333;
-  			min-width: 36px;
-  			height: 36px;
-  			padding: 0 12px;
-  			border-radius: 10px;
-  			display: flex;
-  			align-items: center;
-  			justify-content: center;
-  			box-shadow: none;
-		}
-
-		.custom-pagination .page-item .page-link.number {
-  			font-size: 15px;
-		}
-
-		.custom-pagination .page-item .page-link.arrow {
-  			font-size: 22px;
-  			color: #bdbdbd;
-		}
-
-		.custom-pagination .page-item.active .page-link {
-  			border: 1px solid #4a90ff;
-  			color: #4a90ff;
-  			background-color: white;
-		}
-
-		.custom-pagination .page-item.disabled .page-link {
-  			color: #d6d6d6;
-  			pointer-events: none;
-  			background: transparent;
-		}
+        .modal-footer { display: flex; gap: 10px; margin-top: 24px; }
+        .btn-submit { flex: 1; background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .btn-submit:hover { background: #4f46e5; }
+        .btn-cancel { flex: 1; background: #fff; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; padding: 11px; font-size: 14px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .btn-cancel:hover { background: #f3f4f6; }
     </style>
 </head>
 <body>
+
+<header class="header">
+    <a th:href="@{/dashboard}" class="logo">Co-Work</a>
+    <div class="header-right">
+        <a th:href="@{/dashboard}" class="btn-text"><i class="fas fa-arrow-left"></i> 대시보드</a>
+
+        <th:block th:if="${isLeader}">
+            <a th:href="@{/view/teams/{id}/members(id=${teamId})}" class="btn-manage">
+                <i class="fas fa-cog"></i> 팀 관리
+            </a>
+            <form th:action="@{/teams/{id}/delete(id=${teamId})}" method="post"
+                  onsubmit="return confirm('팀을 삭제하면 모든 데이터가 사라집니다. 계속할까요?');">
+                <button type="submit" class="btn-danger"><i class="fas fa-trash-alt"></i> 팀 삭제</button>
+            </form>
+        </th:block>
+
+        <th:block th:unless="${isLeader}">
+            <form th:action="@{/teams/{id}/leave(id=${teamId})}" method="post"
+                  onsubmit="return confirm('팀에서 탈퇴하시겠습니까?');">
+                <button type="submit" class="btn-danger"><i class="fas fa-sign-out-alt"></i> 팀 탈퇴</button>
+            </form>
+        </th:block>
+    </div>
+</header>
+
 <div class="container">
-
-    <!-- 팀 정보 -->
     <div class="team-header">
-        <h1 th:text="${teamName}">프론트엔드 개발팀</h1>
-        <p>React 프로젝트 개발</p>
+        <h1 th:text="${teamName}">팀 이름</h1>
+        <p th:text="${teamDescription}">프로젝트 자료 및 일정 관리</p>
     </div>
 
-    <!-- 상단 탭 -->
     <div class="menu-tabs">
-        <a th:href="@{/teams/{team_id}/files(team_id=${teamId})}">파일 공유</a>
-        <a th:href="@{/teams/{team_id}/calendar(team_id=${teamId})}" class="active">공동 캘린더</a>
+        <a th:href="@{/teams/{id}/files(id=${teamId})}">파일 공유</a>
+        <a th:href="@{/teams/{id}/calendar(id=${teamId})}" class="active">공동 캘린더</a>
     </div>
 
-    <!-- 캘린더 영역 -->
-    <div class="calendar-box">
-        <div class="calendar-header">
-            <h2>팀 공동 캘린더</h2>
-            <button type="button" class="add-btn"
-                    th:onclick="|location.href='@{/teams/{team_id}/calendar/new(team_id=${teamId})}'|">
-                + 일정 추가
-            </button>
+    <div class="content-card">
+        <div class="content-header">
+            <h2>팀 일정</h2>
+            <button class="btn-add" id="btnAdd"><i class="fas fa-plus"></i> 새 일정 추가</button>
         </div>
 
-        <!-- 날짜 그룹 1 -->
-        <div class="date-group" th:each="calendar : ${calendarAll}">
-            <div class="date-title" th:text="${#temporals.format(calendar?.startAt, 'yyyy년 MM월 dd일')}">시작 날짜</div>
+        <div th:if="${errorMessage}" class="error-box" th:text="${errorMessage}"></div>
 
-            <div class="schedule-card">
-                <div class="schedule-left">
-                    <h3>
-                        <span th:text="${calendar?.title}">title</span>
-                        <span class="badge badge-done" th:text="${calendar?.taskStatus}">진행 상태</span>
-                    </h3>
-                    <p th:text="${calendar?.content}">content</p>
-                    <div class="schedule-time">
-                    [[${#temporals.format(calendar?.startAt, 'yyyy-MM-dd HH:mm')}]] - [[${#temporals.format(calendar?.endAt, 'yyyy-MM-dd HH:mm')}]]</div>
-                </div>
-					<div class="schedule-actions">
-						<!-- 수정 -->
-						<a th:href="@{/teams/{team_id}/calendar/{task_id}/edit(
-                    team_id=${teamId},task_id=${calendar.id})}">
-							✏ </a>
-						<!-- 삭제 -->
-						<form th:action="@{/teams/{team_id}/calendar/{task_id}/delete(
-                        team_id=${teamId},task_id=${calendar.id})}" method="post" style="display: inline;">
-							<button type="submit">🗑</button>
-						</form>
+        <table>
+            <thead>
+                <tr>
+                    <th class="left">내용</th>
+                    <th>작성자</th>
+                    <th>상태</th>
+                    <th>시작</th>
+                    <th>종료</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${calendarAll.totalElements == 0}" class="empty-row">
+                    <td colspan="6">등록된 일정이 없습니다.</td>
+                </tr>
+                <tr th:each="cal, stat : ${calendarAll.content}">
+                    <td class="left" th:text="${cal.content}">내용</td>
+                    <td th:text="${cal.author != null ? cal.author : '-'}">작성자</td>
+                    <td>
+                        <span th:if="${cal.taskStatus.toString() == 'TODO'}"     class="badge-todo">예정</span>
+                        <span th:if="${cal.taskStatus.toString() == 'PROGRESS'}" class="badge-progress">진행중</span>
+                        <span th:if="${cal.taskStatus.toString() == 'DONE'}"     class="badge-done">완료</span>
+                    </td>
+                    <td th:text="${#temporals.format(cal.startAt, 'MM/dd HH:mm')}">시작</td>
+                    <td th:text="${#temporals.format(cal.endAt,   'MM/dd HH:mm')}">종료</td>
+                    <td>
+                        <button class="btn-edit" th:data-index="${stat.index}">수정</button>
+                        <form th:action="@{/teams/{tid}/calendar/{cid}/delete(tid=${teamId},cid=${cal.id})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn-del">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-					</div>
-				</div>
+        <div class="paging" th:if="${calendarAll.totalPages > 1}">
+            <th:block th:each="num : ${pagingNumbers}">
+                <a th:href="@{/teams/{id}/calendar(id=${teamId},page=${num - 1})}"
+                   th:text="${num}"
+                   th:classappend="${num - 1 == calendarAll.number} ? 'active'"></a>
+            </th:block>
         </div>
-
-			<div class="page-wrap">
-				<nav aria-label="Page navigation">
-					<ul class="pagination custom-pagination justify-content-center">
-
-						<!-- 이전 -->
-						<li class="page-item"
-							th:classappend="${calendarAll.hasPrevious()} ? '' : 'disabled'">
-							<a class="page-link arrow"
-							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${calendarAll.number - 1})}"
-							aria-label="Previous"> ‹ </a>
-						</li>
-
-						<!-- 페이지 번호 -->
-						<li class="page-item" th:each="pagingNumber : ${pagingNumbers}"
-							th:classappend="${pagingNumber == calendarAll.number + 1} ? 'active' : ''">
-							<a class="page-link number"
-							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${pagingNumber - 1})}"
-							th:text="${pagingNumber}"> 1 </a>
-						</li>
-
-						<!-- 다음 -->
-						<li class="page-item"
-							th:classappend="${calendarAll.hasNext()} ? '' : 'disabled'">
-							<a class="page-link arrow"
-							th:href="@{/teams/{team_id}/calendar(team_id=${teamId}, page=${calendarAll.number + 1})}"
-							aria-label="Next"> › </a>
-						</li>
-
-					</ul>
-				</nav>
-			</div>
-
-		</div>
+    </div>
 </div>
+
+<!-- ── 모달 ── -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+        <button class="modal-close" id="btnClose">×</button>
+        <h2 class="modal-title" id="modalTitle">새 일정 추가</h2>
+        <p class="modal-sub"   id="modalSub">팀 일정을 추가합니다</p>
+        <form id="modalForm" method="post">
+            <input type="hidden" id="fId" name="id">
+            <div class="field">
+                <label>내용</label>
+                <textarea id="fContent" name="content" placeholder="일정 상세 내용"></textarea>
+            </div>
+            <div class="field">
+                <label>작성자</label>
+                <input type="text" id="fAuthor" name="author" placeholder="작성자 이름">
+            </div>
+            <div class="field">
+                <label>상태</label>
+                <select id="fStatus" name="taskStatus">
+                    <option value="TODO">예정</option>
+                    <option value="PROGRESS">진행중</option>
+                    <option value="DONE">완료</option>
+                </select>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>시작</label>
+                    <input type="datetime-local" id="fStartAt" name="startAt" required>
+                </div>
+                <div class="field">
+                    <label>종료</label>
+                    <input type="datetime-local" id="fEndAt" name="endAt" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-submit" id="btnSubmit">추가</button>
+                <button type="button" class="btn-cancel" id="btnCancel">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+const teamId      = /*[[${teamId}]]*/ 0;
+const defaultUser = /*[[${currentUser}]]*/ '';
+const calData     = /*[[${calendarAll.content}]]*/ [];
+
+const backdrop   = document.getElementById('modalBackdrop');
+const form       = document.getElementById('modalForm');
+const modalTitle = document.getElementById('modalTitle');
+const modalSub   = document.getElementById('modalSub');
+const btnSubmit  = document.getElementById('btnSubmit');
+
+function closeModal() {
+    backdrop.classList.remove('open');
+    form.reset();
+    document.getElementById('fAuthor').value = defaultUser;
+    document.getElementById('fStatus').value = 'TODO';
+}
+
+document.getElementById('btnAdd').addEventListener('click', function () {
+    modalTitle.textContent = '새 일정 추가';
+    modalSub.textContent   = '팀 일정을 추가합니다';
+    btnSubmit.textContent  = '추가';
+    form.action = `/teams/${teamId}/calendar`;
+    document.getElementById('fId').value      = '';
+    document.getElementById('fContent').value = '';
+    document.getElementById('fAuthor').value  = defaultUser;
+    document.getElementById('fStatus').value  = 'TODO';
+    document.getElementById('fStartAt').value = '';
+    document.getElementById('fEndAt').value   = '';
+    backdrop.classList.add('open');
+});
+
+document.querySelectorAll('.btn-edit').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        const cal = calData[parseInt(btn.dataset.index)];
+        modalTitle.textContent = '일정 수정';
+        modalSub.textContent   = '일정 내용을 수정합니다';
+        btnSubmit.textContent  = '수정';
+        form.action = `/teams/${teamId}/calendar/${cal.id}/edit`;
+        document.getElementById('fId').value      = cal.id;
+        document.getElementById('fContent').value = '';
+        document.getElementById('fAuthor').value  = cal.author     || '';
+        document.getElementById('fStatus').value  = cal.taskStatus || 'TODO';
+        document.getElementById('fStartAt').value = cal.startAt ? cal.startAt.substring(0, 16) : '';
+        document.getElementById('fEndAt').value   = cal.endAt   ? cal.endAt.substring(0, 16)   : '';
+        backdrop.classList.add('open');
+    });
+});
+
+document.getElementById('btnClose').addEventListener('click', closeModal);
+document.getElementById('btnCancel').addEventListener('click', closeModal);
+backdrop.addEventListener('click', function (e) { if (e.target === backdrop) closeModal(); });
+/*]]>*/
+</script>
 </body>
 </html>
