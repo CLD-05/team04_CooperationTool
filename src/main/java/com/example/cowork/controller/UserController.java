@@ -58,7 +58,7 @@ public class UserController {
             
             // ⭐ 세션 저장 로그
             session.setAttribute("userNickname", user.getNickname());                      
-            return "redirect:/api/user/dashboard"; 
+            return "redirect:/dashboard"; 
         } catch (IllegalArgumentException e) {        
             model.addAttribute("error", e.getMessage());
             return "auth/login";
@@ -74,16 +74,5 @@ public class UserController {
         return "redirect:/api/user/login";
     }
     
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-    
-        // 1. 세션 확인 로그
-        String nickname = (String) session.getAttribute("userNickname");
-        if (nickname == null) {      
-            return "redirect:/api/user/login";
-        }
-        
-        model.addAttribute("nickname", nickname);
-        return "dashboard"; 
-    }
+
 }
