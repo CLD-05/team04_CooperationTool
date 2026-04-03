@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>팀 생성</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #222;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #ececec;
+            color: #444;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .section-title {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0 0 24px 0;
+        }
+
+        .field-group { margin-bottom: 20px; }
+
+        .field-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .field-input,
+        .field-textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 15px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .field-textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            background: #37c96b;
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .side-card-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 18px 0;
+        }
+
+        .guide-box {
+            background: #f8f8f8;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            line-height: 1.7;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .error-box {
+            margin-bottom: 18px;
+            background: #fff1f1;
+            color: #d33;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .tip {
+            color: #888;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .title { font-size: 34px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="top-bar">
+        <h1 class="title">팀 생성</h1>
+        <a href="/" class="back-btn">← 돌아가기</a>
+    </div>
+
+    <div class="layout">
+        <div class="card">
+            <h2 class="section-title">새 팀 만들기</h2>
+
+            <div th:if="${errorMessage}" class="error-box" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/teams/new}" th:object="${teamForm}" method="post">
+                <div class="field-group">
+                    <label class="field-label" for="name">팀 이름</label>
+                    <input class="field-input" type="text" id="name" th:field="*{name}" placeholder="예: cloud team">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="description">팀 소개</label>
+                    <textarea class="field-textarea" id="description" th:field="*{description}" placeholder="팀 목적이나 소개를 입력하세요"></textarea>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="memberEmails">팀원 이메일</label>
+                    <input class="field-input" type="text" id="memberEmails" th:field="*{memberEmails}" placeholder="member@test.com, user@test.com">
+                    <div class="tip">여러 명은 쉼표(,)로 구분해서 입력</div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="loginEmail">로그인 이메일</label>
+                    <input class="field-input" type="text" id="loginEmail" th:field="*{loginEmail}" placeholder="example@daum.com">
+                </div>
+
+                <button type="submit" class="submit-btn">팀 생성</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3 class="side-card-title">입력 안내</h3>
+
+            <div class="guide-box">팀 이름은 다른 사람들이 알아보기 쉽게 작성해줘.</div>
+            <div class="guide-box">팀원 이메일은 반드시 회원가입된 이메일이어야 정상 추가돼.</div>
+            <div class="guide-box">로그인 이메일을 기준으로 팀장이 자동 지정돼.</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

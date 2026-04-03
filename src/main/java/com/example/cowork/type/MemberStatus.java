@@ -1,5 +1,9 @@
 package com.example.cowork.type;
 
 public enum MemberStatus {
-	INVITED, JOINED
+	INVITED,
+	JOINED,
+	ACCEPTED,
+    PENDING,
+    REJECTED
 }

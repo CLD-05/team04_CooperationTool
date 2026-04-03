@@ -9,7 +9,6 @@ tmp/
 *.bak
 *.swp
 *~.nib
-*.properties
 .settings/
 .loadpath
 .recommenders
@@ -66,7 +65,6 @@ tmp/
 # Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
 .scala_dependencies
-.worksheet
 
 # Uncomment this line if you wish to ignore the project description file.
 # Typically, this file would be tracked if it contains build/dependency configurations:
@@ -98,24 +96,16 @@ tmp/
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# virtual machine crash logs
 hs_err_pid*
 replay_pid*
 
 ### macOS ###
-# General
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
 Icon
-
-
-# Thumbnails
 ._*
-
-# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -123,8 +113,6 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
@@ -132,7 +120,6 @@ Temporary Items
 .apdisk
 
 ### macOS Patch ###
-# iCloud generated files
 *.icloud
 
 ### Maven ###
@@ -145,13 +132,10 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
 # Eclipse m2e generated files
-# Eclipse Core
 .project
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
 ### VisualStudioCode ###
@@ -169,34 +153,22 @@ buildNumber.properties
 *.vsix
 
 ### VisualStudioCode Patch ###
-# Ignore all local history of files
 .history
 .ionide
 
 ### Windows ###
-# Windows thumbnail cache files
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-
-# Dump file
 *.stackdump
-
-# Folder config file
 [Dd]esktop.ini
-
-# Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-# Windows Installer files
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
-
-# Windows shortcuts
 *.lnk
 
 ### Gradle ###
@@ -207,23 +179,45 @@ $RECYCLE.BIN/
 # Ignore Gradle GUI config
 gradle-app.setting
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+# Avoid ignoring Gradle wrapper jar file
 !gradle-wrapper.jar
 
-# Avoid ignore Gradle wrappper properties
+# Avoid ignore Gradle wrapper properties
 !gradle-wrapper.properties
 
 # Cache of project
 .gradletasknamecache
 
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-# JDT-specific (Eclipse Java Development Tools)
-
 ### Gradle Patch ###
-# Java heap dump
 *.hprof
 
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### Project files ###
+HELP.md
+
+### Env / Secret ###
+.env
+.env.*
+application-secret.yml
+application-secret.properties
+
+### Spring local config ###
+src/main/resources/application-local.yml
+src/main/resources/application-local.properties
+
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
-
-
+team04_CooperationTool/
+teamProject1/
