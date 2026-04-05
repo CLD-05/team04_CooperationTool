@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co-Work - 로그인</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; background: #f9fafb; color: #1f2937; font-size: 14px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        .brand { font-size: 26px; font-weight: 800; color: #6366f1; margin-bottom: 28px; letter-spacing: -0.5px; }
+
+        .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 36px; width: 100%; max-width: 400px; }
+        .card-title { font-size: 20px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .field input { width: 100%; padding: 10px 13px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; outline: none; transition: border-color 0.15s; }
+        .field input:focus { border-color: #6366f1; }
+
+        .btn-primary { width: 100%; padding: 12px; background: #6366f1; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.15s; margin-top: 8px; }
+        .btn-primary:hover { background: #4f46e5; }
+
+        .footer-link { text-align: center; margin-top: 20px; font-size: 13px; color: #6b7280; }
+        .footer-link a { color: #6366f1; font-weight: 600; text-decoration: none; }
+        .footer-link a:hover { text-decoration: underline; }
+
+        .alert-ok  { background: #f0fdf4; border: 1px solid #86efac; color: #16a34a; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; }
+        .alert-err { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="brand">Co-Work</div>
+
+    <div class="card">
+        <h2 class="card-title">로그인</h2>
+
+        <div th:if="${message}" class="alert-ok"><i class="fas fa-check-circle"></i> <span th:text="${message}"></span></div>
+        <div th:if="${error}"   class="alert-err"><i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span></div>
+
+        <form th:action="@{/api/user/login}" method="post">
+            <div class="field">
+                <label>이메일</label>
+                <input type="email" name="email" required placeholder="example@email.com">
+            </div>
+            <div class="field">
+                <label>비밀번호</label>
+                <input type="password" name="password" required placeholder="비밀번호를 입력하세요">
+            </div>
+            <button type="submit" class="btn-primary">로그인</button>
+        </form>
+
+        <div class="footer-link">
+            계정이 없으신가요? <a th:href="@{/api/user/signup}">회원가입</a>
+        </div>
+    </div>
+
+</body>
+</html>

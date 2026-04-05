@@ -1,5 +1,4 @@
 # Created by https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,windows,macos,maven,gradle,java,visualstudiocode
 
 ### Eclipse ###
 .metadata
@@ -9,78 +8,32 @@ tmp/
 *.bak
 *.swp
 *~.nib
-*.properties
 .settings/
 .loadpath
 .recommenders
-
-# External tool builders
 .externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
 *.launch
-
-# PyDev specific (Python IDE for Eclipse)
 *.pydevproject
-
-# CDT-specific (C/C++ Development Tooling)
 .cproject
-
-# CDT- autotools
 .autotools
-
-# Java annotation processor (APT)
 .factorypath
-
-# PDT-specific (PHP Development Tools)
 .buildpath
-
-# sbteclipse plugin
 .target
-
-# Tern plugin
 .tern-project
-
-# TeXlipse plugin
 .texlipse
-
-# STS (Spring Tool Suite)
 .springBeans
-
-# Code Recommenders
 .recommenders/
-
-# Annotation Processing
 .apt_generated/
 .apt_generated_test/
-
-# Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
 .scala_dependencies
-.worksheet
-
-# Uncomment this line if you wish to ignore the project description file.
-# Typically, this file would be tracked if it contains build/dependency configurations:
-#.project
-
-### Eclipse Patch ###
-# Spring Boot Tooling
 .sts4-cache/
 
 ### Java ###
-# Compiled class file
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -88,25 +41,15 @@ tmp/
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 
 ### macOS ###
-# General
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
 Icon
-
-
-# Thumbnails
 ._*
-
-# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -114,16 +57,11 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
-
-### macOS Patch ###
-# iCloud generated files
 *.icloud
 
 ### Maven ###
@@ -136,83 +74,82 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
-
-# Eclipse m2e generated files
-# Eclipse Core
 .project
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-### VisualStudioCode ###
+### VSCode ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
 .history/
-
-# Built Visual Studio Code Extensions
 *.vsix
-
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
 .ionide
 
 ### Windows ###
-# Windows thumbnail cache files
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-
-# Dump file
 *.stackdump
-
-# Folder config file
 [Dd]esktop.ini
-
-# Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-# Windows Installer files
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
-
-# Windows shortcuts
 *.lnk
 
 ### Gradle ###
 .gradle
 **/build/
 !src/**/build/
-
-# Ignore Gradle GUI config
 gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
 !gradle-wrapper.properties
-
-# Cache of project
 .gradletasknamecache
-
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-# JDT-specific (Eclipse Java Development Tools)
-
-### Gradle Patch ###
-# Java heap dump
 *.hprof
 
-# End of https://www.toptal.com/developers/gitignore/api/eclipse,windows,macos,maven,gradle,java,visualstudiocode
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### Project ###
+HELP.md
+
+### Spring - 민감 정보 차단 ###
+
+# 테스트 파일 방지
+*Test.java
+*Tests.java
+!CoWorkApplicationTests.java
+
+# 모든 properties/yml 차단 후 필요한 것만 허용
+src/main/resources/application*.properties
+src/main/resources/application*.yml
+!src/main/resources/application.properties.example
+
+# 환경 변수 / 시크릿
+.env
+.env.*
+application-secret.yml
+application-secret.properties
+src/main/resources/application-local.yml
+src/main/resources/application-local.properties
+
+### Project root ###
+team04_CooperationTool/co-work/

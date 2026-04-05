@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 관리 - Co-Work</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: 'Pretendard', sans-serif; background-color: #f9fafb; color: #333; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: white; border-bottom: 1px solid #e5e7eb; }
+        .logo { font-size: 20px; font-weight: bold; text-decoration: none; color: #333; }
+        .btn-back { text-decoration: none; color: #6b7280; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        .btn-back:hover { color: #111; }
+
+        .container { max-width: 720px; margin: 40px auto; padding: 0 20px; }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title { font-size: 26px; font-weight: 800; margin: 0; }
+
+        .btn-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .btn-danger:hover { background: #fee2e2; }
+
+        .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .card-title { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; }
+
+        .invite-row { display: flex; gap: 10px; }
+        .invite-row input { flex: 1; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; }
+        .invite-row input:focus { border-color: #6366f1; }
+        .btn-invite { padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.2s; }
+        .btn-invite:hover { background: #4f46e5; }
+
+        .member-list { list-style: none; padding: 0; margin: 0; }
+        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
+        .member-item:last-child { border-bottom: none; }
+        .member-info { display: flex; align-items: center; gap: 12px; }
+        .member-avatar { width: 36px; height: 36px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6366f1; font-size: 14px; font-weight: 700; }
+        .member-name { font-size: 14px; font-weight: 600; }
+        .member-email { font-size: 12px; color: #9ca3af; }
+
+        .badge { font-size: 11px; padding: 3px 8px; border-radius: 99px; font-weight: 600; }
+        .badge-leader { background: #e0e7ff; color: #4338ca; }
+        .badge-invited { background: #fef9c3; color: #92400e; }
+
+        .btn-remove { background: none; border: 1px solid #e5e7eb; color: #6b7280; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .btn-remove:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+
+        .empty-text { text-align: center; color: #9ca3af; font-size: 14px; padding: 20px 0; }
+
+        .flash-error { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; color: #dc2626; }
+        .flash-success { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; color: #16a34a; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a th:href="@{/dashboard}" class="logo">Co-Work</a>
+    <a th:href="@{/teams/{teamId}/files(teamId=${teamId})}" class="btn-back">
+        <i class="fas fa-arrow-left"></i> 프로젝트로 돌아가기
+    </a>
+</header>
+
+<div class="container">
+
+    <div th:if="${errorMessage}" class="flash-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
+    <div th:if="${message}" class="flash-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${message}"></span>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">팀 관리</h1>
+        <form th:action="@{/teams/{teamId}/delete(teamId=${teamId})}" method="post"
+              onsubmit="return confirm('정말 팀을 삭제하시겠습니까? 모든 데이터가 사라집니다.');">
+            <button type="submit" class="btn-danger">
+                <i class="fas fa-trash-alt"></i> 팀 삭제
+            </button>
+        </form>
+    </div>
+
+    <!-- 팀원 초대 -->
+    <div class="card">
+        <h3 class="card-title"><i class="fas fa-user-plus" style="color:#6366f1"></i> 팀원 초대</h3>
+        <form th:action="@{/view/teams/{teamId}/members/invite(teamId=${teamId})}" method="post">
+            <div class="invite-row">
+                <input type="email" name="email" placeholder="초대할 팀원의 이메일 주소" required>
+                <button type="submit" class="btn-invite">초대 보내기</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 현재 팀원 (ACCEPTED 팀장 포함 + JOINED 멤버) -->
+    <div class="card">
+        <h3 class="card-title"><i class="fas fa-users" style="color:#6366f1"></i> 현재 팀원</h3>
+        <ul class="member-list">
+            <li th:if="${#lists.isEmpty(members)}" class="empty-text">아직 합류한 팀원이 없습니다.</li>
+            <li th:each="member : ${members}" class="member-item">
+                <div class="member-info">
+                    <div class="member-avatar">
+                        <span th:text="${#strings.substring(member.userName, 0, 1)}">A</span>
+                    </div>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="member-name" th:text="${member.userName}">이름</span>
+                            <span class="badge badge-leader" th:if="${member.role.name() == 'LEADER'}">팀장</span>
+                        </div>
+                        <div class="member-email" th:text="${member.userEmail}">email@example.com</div>
+                    </div>
+                </div>
+                <form th:unless="${member.role.name() == 'LEADER'}"
+                      th:action="@{/view/teams/{teamId}/members/remove(teamId=${teamId})}" method="post"
+                      onsubmit="return confirm('이 팀원을 삭제하시겠습니까?');">
+                    <input type="hidden" name="targetUserId" th:value="${member.userId}">
+                    <button type="submit" class="btn-remove">
+                        <i class="fas fa-times"></i> 삭제
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 초대 대기 중 -->
+    <div class="card">
+        <h3 class="card-title"><i class="fas fa-clock" style="color:#f59e0b"></i> 초대 대기 중</h3>
+        <ul class="member-list">
+            <li th:if="${#lists.isEmpty(invitedMembers)}" class="empty-text">대기 중인 초대가 없습니다.</li>
+            <li th:each="member : ${invitedMembers}" class="member-item">
+                <div class="member-info">
+                    <div class="member-avatar" style="background:#fef9c3; color:#92400e;">
+                        <span th:text="${#strings.substring(member.userName, 0, 1)}">A</span>
+                    </div>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="member-name" th:text="${member.userName}">이름</span>
+                            <span class="badge badge-invited">초대 중</span>
+                        </div>
+                        <div class="member-email" th:text="${member.userEmail}">email@example.com</div>
+                    </div>
+                </div>
+                <form th:action="@{/view/teams/{teamId}/members/remove(teamId=${teamId})}" method="post"
+                      onsubmit="return confirm('초대를 취소하시겠습니까?');">
+                    <input type="hidden" name="targetUserId" th:value="${member.userId}">
+                    <button type="submit" class="btn-remove">
+                        <i class="fas fa-times"></i> 취소
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>
