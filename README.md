@@ -219,7 +219,7 @@ mkdir C:\uploads
 **4. 실행**
 
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 브라우저에서 `http://localhost:8080` 접속
@@ -231,7 +231,7 @@ mkdir C:\uploads
 **1. jar 빌드**
 
 ```bash
-./mvnw clean package -DskipTests
+mvn clean package -DskipTests
 ```
 
 **2. 필요 디렉토리 생성**
