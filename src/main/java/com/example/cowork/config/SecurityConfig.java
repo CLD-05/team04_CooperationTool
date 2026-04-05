@@ -8,7 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity 
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
@@ -16,32 +16,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // 작업용 (로그인 하지 않아도 모든 페이지 접근 허용)
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) 
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() 
+                .anyRequest().permitAll()
             )
-            .formLogin(login -> login.disable()); 
-            
+            .formLogin(login -> login.disable());
+
         return http.build();
     }
 }
-
-
-/* 작업 마무리하고 변경(로그인 해야만 다른 페이지 접근 가능)
-		//public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable()) // CSRF 보안 비활성화 (테스트 시 필수)
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용
-            );
-        return http.build();
-    }
-}
-*/

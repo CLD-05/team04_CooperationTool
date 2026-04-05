@@ -11,11 +11,7 @@ import java.util.Optional;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
-    void deleteAllByTeam(Team team);
-
     boolean existsByTeamAndUser(Team team, User user);
-
-    void deleteByTeamAndUser(Team team, User user);
 
     List<TeamMember> findByTeam(Team team);
 
@@ -27,8 +23,10 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     List<TeamMember> findAllByTeamIdAndStatus(Long teamId, MemberStatus status);
 
+    // 팀장(ACCEPTED) + 일반 멤버(JOINED) 모두 조회
+    List<TeamMember> findAllByTeamIdAndStatusIn(Long teamId, List<MemberStatus> statuses);
+
     List<TeamMember> findAllByUserId(Long userId);
 
-    // 특정 유저의 특정 상태 팀 목록 (초대 목록 조회용)
     List<TeamMember> findAllByUserIdAndStatus(Long userId, MemberStatus status);
 }

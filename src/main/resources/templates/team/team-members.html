@@ -18,11 +18,9 @@
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
         .page-title { font-size: 26px; font-weight: 800; margin: 0; }
 
-        /* 팀 삭제 버튼 */
         .btn-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
         .btn-danger:hover { background: #fee2e2; }
 
-        /* 초대 폼 카드 */
         .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
         .card-title { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; }
 
@@ -32,7 +30,6 @@
         .btn-invite { padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.2s; }
         .btn-invite:hover { background: #4f46e5; }
 
-        /* 멤버 목록 */
         .member-list { list-style: none; padding: 0; margin: 0; }
         .member-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
         .member-item:last-child { border-bottom: none; }
@@ -50,7 +47,6 @@
 
         .empty-text { text-align: center; color: #9ca3af; font-size: 14px; padding: 20px 0; }
 
-        /* 피드백 메시지 */
         .flash-error { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; color: #dc2626; }
         .flash-success { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; color: #16a34a; }
     </style>
@@ -77,8 +73,6 @@
 
     <div class="page-header">
         <h1 class="page-title">팀 관리</h1>
-
-        <!-- 팀장만 팀 삭제 가능 -->
         <form th:action="@{/teams/{teamId}/delete(teamId=${teamId})}" method="post"
               onsubmit="return confirm('정말 팀을 삭제하시겠습니까? 모든 데이터가 사라집니다.');">
             <button type="submit" class="btn-danger">
@@ -98,7 +92,7 @@
         </form>
     </div>
 
-    <!-- 현재 팀원 -->
+    <!-- 현재 팀원 (ACCEPTED 팀장 포함 + JOINED 멤버) -->
     <div class="card">
         <h3 class="card-title"><i class="fas fa-users" style="color:#6366f1"></i> 현재 팀원</h3>
         <ul class="member-list">
@@ -113,10 +107,9 @@
                             <span class="member-name" th:text="${member.userName}">이름</span>
                             <span class="badge badge-leader" th:if="${member.role.name() == 'LEADER'}">팀장</span>
                         </div>
-                        <div class="member-email" th:text="${member.userEmail}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1a7f777b73765a7f627b776a767f34797577">[email&#160;protected]</a></div>
+                        <div class="member-email" th:text="${member.userEmail}">email@example.com</div>
                     </div>
                 </div>
-                <!-- 팀장 본인은 삭제 버튼 없음 -->
                 <form th:unless="${member.role.name() == 'LEADER'}"
                       th:action="@{/view/teams/{teamId}/members/remove(teamId=${teamId})}" method="post"
                       onsubmit="return confirm('이 팀원을 삭제하시겠습니까?');">
@@ -144,9 +137,20 @@
                             <span class="member-name" th:text="${member.userName}">이름</span>
                             <span class="badge badge-invited">초대 중</span>
                         </div>
-                        <div class="member-email" th:text="${member.userEmail}"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee8b838f8782ae8b968f839e828bc08d8183">[email&#160;protected]</a></div>
+                        <div class="member-email" th:text="${member.userEmail}">email@example.com</div>
                     </div>
                 </div>
                 <form th:action="@{/view/teams/{teamId}/members/remove(teamId=${teamId})}" method="post"
                       onsubmit="return confirm('초대를 취소하시겠습니까?');">
                     <input type="hidden" name="targetUserId" th:value="${member.userId}">
+                    <button type="submit" class="btn-remove">
+                        <i class="fas fa-times"></i> 취소
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>

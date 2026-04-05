@@ -16,9 +16,6 @@ import com.example.cowork.entity.User;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long>{
 
-	List<Team> findAllByOrderByCreatedAtDesc();
-	
-	List<Team> findByNameContaining(String keyword);
 
 }
 

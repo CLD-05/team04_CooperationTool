@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,18 +39,17 @@ public class TeamService {
         Team team = new Team(form.getName().trim(), form.getDescription(), loginUser);
         Team savedTeam = teamRepository.save(team);
 
-        // 팀장은 바로 ACCEPTED
-        TeamMember leaderMember = new TeamMember();
-        leaderMember.setTeam(savedTeam);
-        leaderMember.setUser(loginUser);
-        leaderMember.setRole(MemberRoleType.LEADER);
-        leaderMember.setStatus(MemberStatus.ACCEPTED);
-        teamMemberRepository.save(leaderMember);
+        // 팀장은 바로 ACCEPTED, builder 패턴으로 생성
+        teamMemberRepository.save(TeamMember.builder()
+                .team(savedTeam)
+                .user(loginUser)
+                .role(MemberRoleType.LEADER)
+                .status(MemberStatus.ACCEPTED)
+                .build());
 
-        // 초대한 멤버는 INVITED — 수락해야 참여됨
+        // 초대한 멤버는 INVITED
         if (form.getMemberEmails() != null && !form.getMemberEmails().trim().isEmpty()) {
             String[] memberArray = form.getMemberEmails().split(",");
-
             for (String memberEmail : memberArray) {
                 String trimmed = memberEmail.trim();
                 if (trimmed.isEmpty()) continue;
@@ -62,12 +60,12 @@ public class TeamService {
                 if (!member.getId().equals(loginUser.getId())) {
                     boolean alreadyExists = teamMemberRepository.existsByTeamAndUser(savedTeam, member);
                     if (!alreadyExists) {
-                        TeamMember memberEntity = new TeamMember();
-                        memberEntity.setTeam(savedTeam);
-                        memberEntity.setUser(member);
-                        memberEntity.setRole(MemberRoleType.MEMBER);
-                        memberEntity.setStatus(MemberStatus.INVITED); // ACCEPTED → INVITED
-                        teamMemberRepository.save(memberEntity);
+                        teamMemberRepository.save(TeamMember.builder()
+                                .team(savedTeam)
+                                .user(member)
+                                .role(MemberRoleType.MEMBER)
+                                .status(MemberStatus.INVITED)
+                                .build());
                     }
                 }
             }
@@ -84,6 +82,7 @@ public class TeamService {
             throw new IllegalArgumentException("팀 리더만 팀을 삭제할 수 있습니다.");
         }
 
+        // findByTeam + deleteAll 대신 deleteAllByTeam으로 변경
         List<TeamMember> members = teamMemberRepository.findByTeam(team);
         teamMemberRepository.deleteAll(members);
         teamRepository.delete(team);
@@ -103,17 +102,9 @@ public class TeamService {
         teamMemberRepository.delete(teamMember);
     }
 
+    @Transactional(readOnly = true)
     public Team getTeamById(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
-    }
-
-    public String getMemberEmails(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new IllegalArgumentException("팀이 존재하지 않습니다."));
-
-        return teamMemberRepository.findByTeam(team).stream()
-                .map(tm -> tm.getUser().getEmail())
-                .collect(Collectors.joining(", "));
     }
 }
