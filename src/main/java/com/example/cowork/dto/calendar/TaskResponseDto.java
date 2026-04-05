@@ -19,7 +19,7 @@ public class TaskResponseDto {
     private Long id;
     private String title;
     private String content;
-    private String author;       // 작성자
+    private String author;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private TaskStatus taskStatus;
@@ -37,12 +37,5 @@ public class TaskResponseDto {
                 task.getTaskStatus(),
                 task.getTeam() != null ? task.getTeam().getId() : null
         );
-    }
-
-    // 조회용 (author 포함)
-    public static TaskResponseDto of(Long id, String title, String content, String author,
-                                     LocalDateTime startAt, LocalDateTime endAt,
-                                     TaskStatus taskStatus, Long teamId) {
-        return new TaskResponseDto(id, title, content, author, startAt, endAt, taskStatus, teamId);
     }
 }

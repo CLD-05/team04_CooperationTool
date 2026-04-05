@@ -30,7 +30,7 @@ public class DashboardService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."))
                 .getNickname();
 
-        // 참여 중인 팀 (JOINED 또는 ACCEPTED 상태만)
+        // 참여 중인 팀 (JOINED 또는 ACCEPTED 상태)
         List<TeamMember> myTeamMembers = teamMemberRepository.findAllByUserId(userId)
                 .stream()
                 .filter(tm -> tm.getStatus() == MemberStatus.JOINED
@@ -57,12 +57,6 @@ public class DashboardService {
                 ))
                 .collect(Collectors.toList());
 
-        return new DashboardResponseDto(
-                nickname + "님",
-                teamCardList,
-                1,
-                (long) teamCardList.size(),
-                inviteList
-        );
+        return new DashboardResponseDto(nickname + "님", teamCardList, inviteList);
     }
 }

@@ -49,11 +49,8 @@ public class UserController {
     public String login(@ModelAttribute LoginRequestDto dto, HttpSession session, Model model) {
         try {
             User user = userService.login(dto);
-
-            // 세션에 userId와 userNickname 함께 저장
             session.setAttribute("userId", user.getId());
             session.setAttribute("userNickname", user.getNickname());
-
             return "redirect:/dashboard";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -63,9 +60,7 @@ public class UserController {
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
-        if (session != null) {
-            session.invalidate();
-        }
+        if (session != null) session.invalidate();
         return "redirect:/api/user/login";
     }
 }

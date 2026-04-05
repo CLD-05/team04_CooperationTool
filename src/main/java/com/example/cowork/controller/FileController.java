@@ -39,7 +39,7 @@ public class FileController {
     private final TeamMemberService teamMemberService;
     private final TeamService teamService;
 
-    // 1. 파일 목록 조회 (GET) — 업로드 폼도 이 페이지에서 인라인 처리
+    // 1. 파일 목록 조회
     @GetMapping
     public String fileList(@PathVariable("team_id") Long teamId,
                            @RequestParam(value = "page", defaultValue = "0") int page,
@@ -47,9 +47,7 @@ public class FileController {
                            Model model) {
 
         Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/api/user/login";
-        }
+        if (userId == null) return "redirect:/api/user/login";
 
         Pageable pageable = PageRequest.of(page, 10);
         Page<FileResponseDto> files = fileService.getTeamFiles(teamId, pageable);
@@ -64,12 +62,13 @@ public class FileController {
         model.addAttribute("files", files);
         model.addAttribute("teamId", teamId);
         model.addAttribute("teamName", team.getName());
-        model.addAttribute("teamDescription", team.getDescription() != null ? team.getDescription() : "프로젝트 자료 및 일정 관리");
+        model.addAttribute("teamDescription",
+                team.getDescription() != null ? team.getDescription() : "프로젝트 자료 및 일정 관리");
         model.addAttribute("isLeader", isLeader);
         return "file-form/list";
     }
 
-    // 2. 파일 업로드 처리 (POST) — list 페이지의 hidden input form에서 바로 호출
+    // 2. 파일 업로드
     @PostMapping("/upload")
     public String uploadFile(@PathVariable("team_id") Long teamId,
                              @RequestParam("file") MultipartFile file,
@@ -77,9 +76,7 @@ public class FileController {
                              RedirectAttributes redirectAttributes) {
 
         Long uploaderId = (Long) session.getAttribute("userId");
-        if (uploaderId == null) {
-            return "redirect:/api/user/login";
-        }
+        if (uploaderId == null) return "redirect:/api/user/login";
 
         try {
             fileService.uploadFile(teamId, uploaderId, file);
@@ -89,11 +86,16 @@ public class FileController {
         return "redirect:/teams/" + teamId + "/files";
     }
 
-    // 3. 파일 삭제 처리 (POST)
+    // 3. 파일 삭제
     @PostMapping("/{file_id}/delete")
     public String deleteFile(@PathVariable("team_id") Long teamId,
                              @PathVariable("file_id") Long fileId,
+                             HttpSession session,
                              RedirectAttributes redirectAttributes) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/api/user/login";
+
         try {
             fileService.deleteFile(fileId);
         } catch (IllegalArgumentException e) {
@@ -102,11 +104,20 @@ public class FileController {
         return "redirect:/teams/" + teamId + "/files";
     }
 
-    // 4. 파일 다운로드 (GET)
+    // 4. 파일 다운로드
     @GetMapping("/{file_id}/download")
-    public Object downloadFile(@PathVariable("team_id") Long teamId,
-                               @PathVariable("file_id") Long fileId,
-                               RedirectAttributes redirectAttributes) {
+    public ResponseEntity<Object> downloadFile(@PathVariable("team_id") Long teamId,
+                                               @PathVariable("file_id") Long fileId,
+                                               HttpSession session,
+                                               RedirectAttributes redirectAttributes) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(302)
+                    .header(HttpHeaders.LOCATION, "/api/user/login")
+                    .build();
+        }
+
         try {
             FileEntity fileEntity = fileService.getFileById(fileId);
             UrlResource resource = new UrlResource("file:" + fileEntity.getFilePath());
@@ -120,7 +131,9 @@ public class FileController {
                     .body(resource);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/teams/" + teamId + "/files";
+            return ResponseEntity.status(302)
+                    .header(HttpHeaders.LOCATION, "/teams/" + teamId + "/files")
+                    .build();
         }
     }
 }

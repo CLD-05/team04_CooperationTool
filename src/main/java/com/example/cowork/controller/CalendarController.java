@@ -32,8 +32,12 @@ public class CalendarController {
     private final PagingService pagingService;
     private final TeamMemberService teamMemberService;
 
+    private Long getLoginUserId(HttpSession session) {
+        return (Long) session.getAttribute("userId");
+    }
+
     private boolean checkIsLeader(Long teamId, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
+        Long userId = getLoginUserId(session);
         if (userId == null) return false;
         try {
             return teamMemberService.getMemberInfo(teamId, userId).getRole() == MemberRoleType.LEADER;
@@ -52,14 +56,14 @@ public class CalendarController {
         map.addAttribute("currentUser", session.getAttribute("userNickname"));
     }
 
-    // 캘린더 목록 (등록/수정 모달 포함)
+    // 캘린더 목록
     @GetMapping("/{team_id}/calendar")
     public String getCalendars(@PathVariable("team_id") Long tid,
                                @PageableDefault(size = 5) Pageable pageable,
                                HttpSession session,
                                ModelMap map) {
 
-        if (session.getAttribute("userId") == null) return "redirect:/api/user/login";
+        if (getLoginUserId(session) == null) return "redirect:/api/user/login";
 
         Page<TaskResponseDto> calendars = calendarService.getCalendarWithPage(tid, pageable);
         List<Integer> pagingNumbers = pagingService.getPagingNumbers(
@@ -71,16 +75,17 @@ public class CalendarController {
         return "calendar/calendar";
     }
 
-    // 일정 등록 처리 (모달 form POST)
+    // 일정 등록
     @PostMapping("/{team_id}/calendar")
     public String registerCalendar(@PathVariable("team_id") Long tid,
                                    TaskRequestDto taskRequestDto,
                                    HttpSession session,
                                    ModelMap map) {
+        if (getLoginUserId(session) == null) return "redirect:/api/user/login";
+
         try {
             calendarService.registerCalendar(tid, taskRequestDto);
         } catch (IllegalArgumentException e) {
-            // 에러 시 목록 페이지로 돌아가면서 메시지 표시
             Page<TaskResponseDto> calendars = calendarService.getCalendarWithPage(tid, Pageable.ofSize(5));
             List<Integer> pagingNumbers = pagingService.getPagingNumbers(1, calendars.getTotalPages());
             setCommonAttributes(tid, session, map);
@@ -92,13 +97,15 @@ public class CalendarController {
         return "redirect:/teams/{team_id}/calendar";
     }
 
-    // 일정 수정 처리 (모달 form POST)
+    // 일정 수정
     @PostMapping("/{team_id}/calendar/{task_id}/edit")
     public String updateCalendar(@PathVariable("team_id") Long tid,
                                  @PathVariable("task_id") Long taskId,
                                  TaskRequestDto taskRequestDto,
                                  HttpSession session,
                                  ModelMap map) {
+        if (getLoginUserId(session) == null) return "redirect:/api/user/login";
+
         try {
             calendarService.updateCalendar(tid, taskId, taskRequestDto);
         } catch (IllegalArgumentException e) {
@@ -116,7 +123,9 @@ public class CalendarController {
     // 일정 삭제
     @PostMapping("/{team_id}/calendar/{task_id}/delete")
     public String deleteCalendar(@PathVariable("team_id") Long tid,
-                                 @PathVariable("task_id") Long taskId) {
+                                 @PathVariable("task_id") Long taskId,
+                                 HttpSession session) {
+        if (getLoginUserId(session) == null) return "redirect:/api/user/login";
         calendarService.deleteCalendar(tid, taskId);
         return "redirect:/teams/{team_id}/calendar";
     }

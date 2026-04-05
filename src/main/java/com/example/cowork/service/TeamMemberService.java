@@ -35,15 +35,7 @@ public class TeamMemberService {
         return convertToResponse(member);
     }
 
-    // 팀장 ID 조회 (초대 거절 시 사용)
-    @Transactional(readOnly = true)
-    public Long getLeaderId(Long teamId) {
-        return teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("팀을 찾을 수 없습니다."))
-                .getLeader().getId();
-    }
-
-    // 1. 팀원 초대
+    // 팀원 초대
     public void inviteMember(Long teamId, Long leaderId, MemberInviteRequest request) {
         TeamMember requester = teamMemberRepository.findByTeamIdAndUserId(teamId, leaderId)
                 .orElseThrow(() -> new RuntimeException("권한 정보가 없습니다."));
@@ -66,7 +58,7 @@ public class TeamMemberService {
                 .role(MemberRoleType.MEMBER).status(MemberStatus.INVITED).build());
     }
 
-    // 2. 초대 수락 → JOINED로 변경
+    // 초대 수락 → JOINED로 변경
     public void acceptInvitation(Long teamId, Long currentUserId) {
         TeamMember invitation = teamMemberRepository
                 .findByTeamIdAndUserIdAndStatus(teamId, currentUserId, MemberStatus.INVITED)
@@ -74,7 +66,7 @@ public class TeamMemberService {
         invitation.setStatus(MemberStatus.JOINED);
     }
 
-    // 초대 거절 — 본인이 직접 INVITED 레코드 삭제
+    // 초대 거절 — INVITED 레코드 삭제
     public void declineInvitation(Long teamId, Long currentUserId) {
         TeamMember invitation = teamMemberRepository
                 .findByTeamIdAndUserIdAndStatus(teamId, currentUserId, MemberStatus.INVITED)
@@ -82,7 +74,7 @@ public class TeamMemberService {
         teamMemberRepository.delete(invitation);
     }
 
-    // 3. 팀원 삭제 / 초대 취소 / 초대 거절 통합
+    // 팀원 삭제 / 초대 취소 통합
     public void removeMember(Long teamId, Long requesterId, Long targetUserId) {
         TeamMember requester = teamMemberRepository.findByTeamIdAndUserId(teamId, requesterId)
                 .orElseThrow(() -> new RuntimeException("요청자 정보를 찾을 수 없습니다."));
@@ -101,12 +93,17 @@ public class TeamMemberService {
         teamMemberRepository.delete(targetMember);
     }
 
+    // JOINED + ACCEPTED 상태 팀원 목록 (팀장 포함)
     @Transactional(readOnly = true)
     public List<TeamMemberResponse> getTeamMembers(Long teamId) {
-        return teamMemberRepository.findAllByTeamIdAndStatus(teamId, MemberStatus.JOINED).stream()
-                .map(this::convertToResponse).collect(Collectors.toList());
+        return teamMemberRepository.findAllByTeamIdAndStatusIn(
+                        teamId, List.of(MemberStatus.JOINED, MemberStatus.ACCEPTED))
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
+    // 초대 대기 목록
     @Transactional(readOnly = true)
     public List<TeamMemberResponse> getInviteMembers(Long teamId) {
         return teamMemberRepository.findAllByTeamIdAndStatus(teamId, MemberStatus.INVITED).stream()
