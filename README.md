@@ -81,51 +81,8 @@ Spring Boot (Thymeleaf MVC)
 ---
 
 ## ERD
+<img width="1440" height="1722" alt="image" src="https://github.com/user-attachments/assets/dc440515-1283-48bd-aeae-d931a847c6b1" />
 
-```
-users
-├── id (PK)
-├── email (UNIQUE)
-├── password
-├── nickname (UNIQUE)
-├── created_at
-└── modified_at
-
-teams
-├── id (PK)
-├── name
-├── description
-├── created_at
-└── leader_id (FK → users.id)
-
-team_members
-├── id (PK)
-├── team_id (FK → teams.id)
-├── user_id (FK → users.id)
-├── role       (LEADER | MEMBER)
-└── status     (INVITED | JOINED | ACCEPTED)
-
-task
-├── id (PK)
-├── team_id (FK → teams.id)
-├── title
-├── content
-├── author
-├── task_status  (TODO | PROGRESS | DONE)
-├── start_at
-├── end_at
-└── created_at
-
-file
-├── id (PK)
-├── team_id
-├── uploader_id
-├── file_name
-├── file_path
-└── created_at
-```
-
----
 
 ## API 명세
 
